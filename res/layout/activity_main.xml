@@ -4,9 +4,28 @@
     android:layout_height="match_parent"
     tools:context="${relativePackage}.${activityClass}" >
 
-    <TextView
+    <ToggleButton
+        android:id="@+id/btn_advertise"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/hello_world" />
+        android:layout_centerHorizontal="true"
+        android:onClick="advertiseButton"
+        android:textOff="Advertise OFF"
+        android:textOn="Advertise ON" />
+
+    <Button
+        android:id="@+id/btn_scan"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:text="Scan for devices" />
+
+    <ListView
+        android:id="@+id/list_devices"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/btn_scan"
+        android:layout_below="@id/btn_advertise" />
 
 </RelativeLayout>
