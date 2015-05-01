@@ -20,6 +20,7 @@ import android.os.RemoteException;
 import android.util.Log;
 import android.widget.CompoundButton;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
@@ -78,6 +79,10 @@ public class MainActivity extends Activity implements BeaconConsumer {
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
+
+		if (isAdvertisingSupportedDevice()) {
+			advertiseBluetoothDevice(false);
+		}
 		scanBluetoothDevices(false);
 	}
 
@@ -166,11 +171,19 @@ public class MainActivity extends Activity implements BeaconConsumer {
 			finish();
 		}
 
+		updateMyBluetoothAddress();
+
 		if (!btAdapter.isEnabled()) {
 			Intent enableBtIntent = new Intent(
 					BluetoothAdapter.ACTION_REQUEST_ENABLE);
 			startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
 		}
+	}
+
+	private void updateMyBluetoothAddress() {
+		// Update my address
+		TextView txtMyAddress = (TextView) findViewById(R.id.txt_my_bluetooth_address);
+		txtMyAddress.setText(btAdapter.getAddress());
 	}
 
 	private void scanBluetoothDevices(boolean isEnabled) {
