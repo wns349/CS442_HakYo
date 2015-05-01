@@ -4,28 +4,34 @@
     android:layout_height="match_parent"
     tools:context="${relativePackage}.${activityClass}" >
 
-    <ToggleButton
-        android:id="@+id/btn_advertise"
+    <LinearLayout
+        android:id="@+id/row_togglebuttons"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:onClick="advertiseButton"
-        android:textOff="Advertise OFF"
-        android:textOn="Advertise ON" />
+        android:orientation="horizontal"
+        android:padding="10dp" >
 
-    <Button
-        android:id="@+id/btn_scan"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:text="Scan for devices" />
+        <ToggleButton
+            android:id="@+id/btn_advertise"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textOff="Advertise OFF"
+            android:textOn="Advertise ON" />
+
+        <ToggleButton
+            android:id="@+id/btn_scan"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textOff="Scan OFF"
+            android:textOn="Scan ON" />
+    </LinearLayout>
 
     <ListView
         android:id="@+id/list_devices"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@id/btn_scan"
-        android:layout_below="@id/btn_advertise" />
+        android:layout_below="@id/row_togglebuttons" />
 
 </RelativeLayout>

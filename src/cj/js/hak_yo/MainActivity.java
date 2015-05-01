@@ -15,8 +15,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.util.Log;
+import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 public class MainActivity extends Activity implements BeaconConsumer {
 	private static final String TAG = "CJS";
@@ -59,15 +61,37 @@ public class MainActivity extends Activity implements BeaconConsumer {
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-		if (beaconManager != null) {
-			beaconManager.unbind(this);
-		}
+		scanBluetoothDevices(false);
 	}
 
+	CompoundButton.OnCheckedChangeListener onTbAdvertiseChanged = new CompoundButton.OnCheckedChangeListener() {
+		@Override
+		public void onCheckedChanged(CompoundButton buttonView,
+				boolean isChecked) {
+
+		}
+	};
+
+	CompoundButton.OnCheckedChangeListener onTbScanChanged = new CompoundButton.OnCheckedChangeListener() {
+		@Override
+		public void onCheckedChanged(CompoundButton buttonView,
+				boolean isChecked) {
+			scanBluetoothDevices(isChecked);
+		}
+	};
+
 	private void initializeViews() {
+		// Advertise
+		ToggleButton tbAdvertise = (ToggleButton) findViewById(R.id.btn_advertise);
+		tbAdvertise.setOnCheckedChangeListener(onTbAdvertiseChanged);
+
+		// Scan
+		ToggleButton tbScan = (ToggleButton) findViewById(R.id.btn_scan);
+		tbScan.setOnCheckedChangeListener(onTbScanChanged);
+
+		// Listview
 		ListView listDevices = (ListView) findViewById(R.id.list_devices);
 		deviceListAdapter = new DeviceListAdapter(this);
-
 		listDevices.setAdapter(deviceListAdapter);
 		deviceListAdapter.notifyDataSetChanged();
 	}
@@ -91,8 +115,20 @@ public class MainActivity extends Activity implements BeaconConsumer {
 	}
 
 	private void scanBluetoothDevices() {
+		ToggleButton tbScan = (ToggleButton) findViewById(R.id.btn_scan);
+		tbScan.setChecked(true);
+	}
+
+	private void scanBluetoothDevices(boolean isEnabled) {
 		beaconManager = BeaconManager.getInstanceForApplication(this);
-		beaconManager.bind(this);
+		ListView listDevices = (ListView) findViewById(R.id.list_devices);
+		listDevices.setEnabled(isEnabled);
+
+		if (isEnabled) {
+			beaconManager.bind(this);
+		} else {
+			beaconManager.unbind(this);
+		}
 	}
 
 	@Override
