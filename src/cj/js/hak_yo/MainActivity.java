@@ -1,11 +1,14 @@
 package cj.js.hak_yo;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 
 import org.altbeacon.beacon.Beacon;
 import org.altbeacon.beacon.BeaconConsumer;
 import org.altbeacon.beacon.BeaconManager;
+import org.altbeacon.beacon.BeaconParser;
+import org.altbeacon.beacon.BeaconTransmitter;
 import org.altbeacon.beacon.RangeNotifier;
 import org.altbeacon.beacon.Region;
 
@@ -25,11 +28,21 @@ public class MainActivity extends Activity implements BeaconConsumer {
 
 	private static final int REQUEST_ENABLE_BT = 1928;
 
+	private static final String BEACON_UUID = "e6ed2836-e641-414b-b3ce-b200413845d3";
+
+	private final Beacon ADVERTISING_BEACON = new Beacon.Builder()
+			.setId1(BEACON_UUID).setId2("1").setId3("2")
+			.setManufacturer(0x0118).setTxPower(-59)
+			.setDataFields(Arrays.asList(new Long[] { 0L })).build();
+
 	private BluetoothAdapter btAdapter = null;
 
 	private BeaconManager beaconManager = null;
+	private BeaconTransmitter beaconTransmitter = null;
 
 	private DeviceListAdapter deviceListAdapter = null;
+
+	private boolean isStartCalled = false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +52,10 @@ public class MainActivity extends Activity implements BeaconConsumer {
 		initializeViews();
 
 		initializeBluetooth();
+
+		initializeBeacon();
+
+		startBeacon();
 	}
 
 	@Override
@@ -50,7 +67,7 @@ public class MainActivity extends Activity implements BeaconConsumer {
 						Toast.LENGTH_LONG).show();
 				finish();
 			} else if (resultCode == Activity.RESULT_OK) {
-				scanBluetoothDevices();
+				startBeacon();
 			}
 			break;
 		default:
@@ -68,7 +85,9 @@ public class MainActivity extends Activity implements BeaconConsumer {
 		@Override
 		public void onCheckedChanged(CompoundButton buttonView,
 				boolean isChecked) {
-
+			if (isAdvertisingSupportedDevice()) {
+				advertiseBluetoothDevice(isChecked);
+			}
 		}
 	};
 
@@ -79,6 +98,10 @@ public class MainActivity extends Activity implements BeaconConsumer {
 			scanBluetoothDevices(isChecked);
 		}
 	};
+
+	private boolean isAdvertisingSupportedDevice() {
+		return (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP);
+	}
 
 	private void initializeViews() {
 		// Advertise
@@ -96,6 +119,44 @@ public class MainActivity extends Activity implements BeaconConsumer {
 		deviceListAdapter.notifyDataSetChanged();
 	}
 
+	private void initializeBeacon() {
+		beaconManager = BeaconManager.getInstanceForApplication(this);
+
+		if (isAdvertisingSupportedDevice()) {
+			BeaconParser beaconParser = new BeaconParser()
+					.setBeaconLayout("m:2-3=beac,i:4-19,i:20-21,i:22-23,p:24-24,d:25-25");
+			beaconTransmitter = new BeaconTransmitter(getApplicationContext(),
+					beaconParser);
+		}
+	}
+
+	protected void advertiseBluetoothDevice(boolean isEnabled) {
+		if (isEnabled) {
+			beaconTransmitter.startAdvertising(ADVERTISING_BEACON);
+		} else {
+			beaconTransmitter.stopAdvertising();
+		}
+	}
+
+	private void startBeacon() {
+		if (isStartCalled) {
+			return;
+		}
+
+		ToggleButton tbAdvertise = (ToggleButton) findViewById(R.id.btn_advertise);
+		if (isAdvertisingSupportedDevice()) {
+			tbAdvertise.setChecked(true);
+		} else {
+			tbAdvertise.setChecked(false);
+			tbAdvertise.setEnabled(false);
+		}
+
+		ToggleButton tbScan = (ToggleButton) findViewById(R.id.btn_scan);
+		tbScan.setChecked(true);
+
+		isStartCalled = true;
+	}
+
 	private void initializeBluetooth() {
 		btAdapter = BluetoothAdapter.getDefaultAdapter();
 		if (btAdapter == null) {
@@ -109,18 +170,10 @@ public class MainActivity extends Activity implements BeaconConsumer {
 			Intent enableBtIntent = new Intent(
 					BluetoothAdapter.ACTION_REQUEST_ENABLE);
 			startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-		} else {
-			scanBluetoothDevices();
 		}
 	}
 
-	private void scanBluetoothDevices() {
-		ToggleButton tbScan = (ToggleButton) findViewById(R.id.btn_scan);
-		tbScan.setChecked(true);
-	}
-
 	private void scanBluetoothDevices(boolean isEnabled) {
-		beaconManager = BeaconManager.getInstanceForApplication(this);
 		ListView listDevices = (ListView) findViewById(R.id.list_devices);
 		listDevices.setEnabled(isEnabled);
 
