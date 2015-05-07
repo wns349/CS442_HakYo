@@ -19,6 +19,7 @@ import android.app.TaskStackBuilder;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.support.v4.app.NotificationCompat;
@@ -42,6 +43,8 @@ public class HakYoService extends Service implements BeaconConsumer {
 	private BeaconManager beaconManager = null;
 	private BeaconTransmitter beaconTransmitter = null;
 
+	private final HakYoBroadcastReceiver hakYoBroadcastReceiver = new HakYoBroadcastReceiver();
+
 	@Override
 	public void onCreate() {
 		super.onCreate();
@@ -53,6 +56,8 @@ public class HakYoService extends Service implements BeaconConsumer {
 		initializeBeacon();
 
 		startBeacon();
+
+		registerBroadcastReceiver(true);
 	}
 
 	@Override
@@ -67,6 +72,17 @@ public class HakYoService extends Service implements BeaconConsumer {
 		showRunningNotification(false);
 
 		showRunningNotification(false);
+
+		registerBroadcastReceiver(false);
+	}
+
+	private void registerBroadcastReceiver(boolean register) {
+		if (register) {
+			registerReceiver(hakYoBroadcastReceiver, new IntentFilter(
+					BluetoothAdapter.ACTION_STATE_CHANGED));
+		} else {
+			unregisterReceiver(hakYoBroadcastReceiver);
+		}
 	}
 
 	private void showRunningNotification(boolean isShow) {
@@ -77,23 +93,14 @@ public class HakYoService extends Service implements BeaconConsumer {
 					.setContentTitle("Hak-Yo!")
 					.setContentText("Hak-Yo is running!");
 			Intent resultIntent = new Intent(this, MainActivity.class);
-			// The stack builder object will contain an artificial back stack
-			// for
-			// the
-			// started Activity.
-			// This ensures that navigating backward from the Activity leads out
-			// of
-			// your application to the Home screen.
+
 			TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-			// Adds the back stack for the Intent (but not the Intent itself)
 			stackBuilder.addParentStack(MainActivity.class);
-			// Adds the Intent that starts the Activity to the top of the stack
 			stackBuilder.addNextIntent(resultIntent);
 			PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(
 					0, PendingIntent.FLAG_UPDATE_CURRENT);
 			nBuilder.setContentIntent(resultPendingIntent);
 
-			// mId allows you to update the notification later on.
 			mNotificationManager.notify(NOTIFICATION_ID, nBuilder.build());
 		} else {
 			mNotificationManager.cancel(NOTIFICATION_ID);

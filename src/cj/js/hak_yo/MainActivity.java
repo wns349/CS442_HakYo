@@ -1,7 +1,5 @@
 package cj.js.hak_yo;
 
-import org.altbeacon.beacon.BeaconManager;
-
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningServiceInfo;
