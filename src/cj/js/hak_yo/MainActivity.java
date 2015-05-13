@@ -3,18 +3,25 @@ package cj.js.hak_yo;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningServiceInfo;
-import android.bluetooth.BluetoothAdapter;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
-import android.widget.CompoundButton;
+import android.os.IBinder;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ListView;
 import android.widget.Toast;
-import android.widget.ToggleButton;
+import cj.js.hak_yo.ble.HakYoBLEService;
+import cj.js.hak_yo.friend.AddFriendActivity;
 
 public class MainActivity extends Activity {
 	private static final String TAG = "CJS";
 
-	private static final int REQUEST_ENABLE_BT = 1928;
+	private DeviceListAdapter deviceListAdapter = null;
+
+	private HakYoBLEService bleService = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -23,45 +30,25 @@ public class MainActivity extends Activity {
 
 		initializeViews();
 
-		initializeBluetooth();
+		startBLEService();
 	}
-
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		switch (requestCode) {
-		case REQUEST_ENABLE_BT:
-			if (resultCode == Activity.RESULT_CANCELED) {
-				Toast.makeText(this, "Bluetooth must be enabled.",
-						Toast.LENGTH_LONG).show();
-				finish();
-			} else if (resultCode == Activity.RESULT_OK) {
-
-			}
-			break;
-		default:
-			break;
-		}
-	};
 
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
+
+		if (bleService != null) {
+			unbindService(bleServiceConnection);
+		}
 	}
 
-	CompoundButton.OnCheckedChangeListener onTbAdvertiseChanged = new CompoundButton.OnCheckedChangeListener() {
-		@Override
-		public void onCheckedChanged(CompoundButton buttonView,
-				boolean isChecked) {
-
-			Intent hakYoService = new Intent(getApplicationContext(),
-					HakYoService.class);
-			if (isChecked) {
-				startService(hakYoService);
-			} else {
-				stopService(hakYoService);
-			}
-		}
-	};
+	private void startBLEService() {
+		Intent hakYoService = new Intent(getApplicationContext(),
+				HakYoBLEService.class);
+		bindService(hakYoService, bleServiceConnection,
+				Context.BIND_AUTO_CREATE);
+		startService(hakYoService);
+	}
 
 	private boolean isMyServiceRunning(Class<?> serviceClass) {
 		ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
@@ -74,31 +61,45 @@ public class MainActivity extends Activity {
 		return false;
 	}
 
-	private boolean isAdvertisingSupportedDevice() {
-		return (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP);
-	}
-
 	private void initializeViews() {
-		// Advertise
-		ToggleButton tbAdvertise = (ToggleButton) findViewById(R.id.btn_advertise);
-		tbAdvertise.setChecked(isMyServiceRunning(HakYoService.class));
+		// Add Friend
+		Button btnAddFriend = (Button) findViewById(R.id.btn_add_friend);
+		btnAddFriend.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Intent intentAddFriend = new Intent(getApplicationContext(),
+						AddFriendActivity.class);
+				startActivity(intentAddFriend);
+			}
+		});
 
-		tbAdvertise.setOnCheckedChangeListener(onTbAdvertiseChanged);
+		// Settings
+		Button btnSettings = (Button) findViewById(R.id.btn_settings);
+		btnSettings.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Toast.makeText(getApplicationContext(), "TODO",
+						Toast.LENGTH_SHORT).show();
+			}
+		});
+
+		// Listview
+		ListView listDevices = (ListView) findViewById(R.id.list_devices);
+		deviceListAdapter = new DeviceListAdapter(this);
+		listDevices.setAdapter(deviceListAdapter);
+		deviceListAdapter.notifyDataSetChanged();
 	}
 
-	private void initializeBluetooth() {
-		BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
-		if (btAdapter == null) {
-			// Bluetooth not supported by the device
-			Toast.makeText(this, "Bluetooth not found.", Toast.LENGTH_LONG)
-					.show();
-			finish();
+	private ServiceConnection bleServiceConnection = new ServiceConnection() {
+		@Override
+		public void onServiceDisconnected(ComponentName name) {
+			bleService = null;
 		}
 
-		if (!btAdapter.isEnabled()) {
-			Intent enableBtIntent = new Intent(
-					BluetoothAdapter.ACTION_REQUEST_ENABLE);
-			startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+		@Override
+		public void onServiceConnected(ComponentName name, IBinder service) {
+			HakYoBLEService.LocalBinder binder = (HakYoBLEService.LocalBinder) service;
+			bleService = binder.getService();
 		}
-	}
+	};
 }

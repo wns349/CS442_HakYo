@@ -27,7 +27,7 @@
             </intent-filter>
         </activity>
 
-        <service android:name="HakYoService" >
+        <service android:name=".ble.HakYoBLEService" >
         </service>
 
         <receiver
@@ -37,6 +37,7 @@
                 <action android:name="android.bluetooth.adapter.action.STATE_CHANGED" />
             </intent-filter>
         </receiver>
+        <activity android:name=".friend.AddFriendActivity"></activity>
     </application>
 
 </manifest>

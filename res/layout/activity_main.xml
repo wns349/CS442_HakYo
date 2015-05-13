@@ -13,19 +13,17 @@
         android:orientation="horizontal"
         android:padding="10dp" >
 
-        <ToggleButton
-            android:id="@+id/btn_advertise"
+        <Button
+            android:id="@+id/btn_add_friend"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textOff="Advertise OFF"
-            android:textOn="Advertise ON" />
+            android:text="Add Friend" />
 
-        <ToggleButton
-            android:id="@+id/btn_scan"
+        <Button
+            android:id="@+id/btn_settings"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textOff="Scan OFF"
-            android:textOn="Scan ON" />
+            android:text="Settings" />
     </LinearLayout>
 
     <TextView
