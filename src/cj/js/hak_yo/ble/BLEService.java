@@ -22,12 +22,13 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 import android.widget.Toast;
 import cj.js.hak_yo.Const;
 import cj.js.hak_yo.HakYoBroadcastReceiver;
 import cj.js.hak_yo.MainActivity;
 
-public class HakYoBLEService extends Service implements BeaconConsumer {
+public class BLEService extends Service implements BeaconConsumer {
 	private static final String TAG = "CJS";
 
 	private static final int NOTIFICATION_ID = 1357;
@@ -40,27 +41,23 @@ public class HakYoBLEService extends Service implements BeaconConsumer {
 			.setDataFields(Const.BeaconConst.DATA_FIELDS).build();
 
 	private BluetoothAdapter btAdapter = null;
-
 	private BeaconManager beaconManager = null;
 	private BeaconTransmitter beaconTransmitter = null;
 
 	private final HakYoBroadcastReceiver hakYoBroadcastReceiver = new HakYoBroadcastReceiver();
 
-	private final IBinder mBinder = new LocalBinder();
+	private final LocalBinder mBinder = new LocalBinder();
+	private BLECallback mBLECallback = null;
 
 	@Override
 	public void onCreate() {
 		super.onCreate();
 
-		showRunningNotification(true);
+	}
 
-		initializeBluetooth();
-
-		initializeBeacon();
-
-		startBeacon();
-
-		registerBroadcastReceiver(true);
+	@Override
+	public int onStartCommand(Intent intent, int flags, int startId) {
+		return super.onStartCommand(intent, flags, startId);
 	}
 
 	@Override
@@ -74,9 +71,17 @@ public class HakYoBLEService extends Service implements BeaconConsumer {
 
 		showRunningNotification(false);
 
-		showRunningNotification(false);
-
 		registerBroadcastReceiver(false);
+	}
+
+	public void startBLE() {
+		showRunningNotification(true);
+
+		if (initializeBluetooth()) {
+			initializeBeacon();
+			startBeacon();
+			registerBroadcastReceiver(true);
+		}
 	}
 
 	private void registerBroadcastReceiver(boolean register) {
@@ -84,7 +89,11 @@ public class HakYoBLEService extends Service implements BeaconConsumer {
 			registerReceiver(hakYoBroadcastReceiver, new IntentFilter(
 					BluetoothAdapter.ACTION_STATE_CHANGED));
 		} else {
-			unregisterReceiver(hakYoBroadcastReceiver);
+			try {
+				unregisterReceiver(hakYoBroadcastReceiver);
+			} catch (IllegalArgumentException e) {
+				Log.e(TAG, "Failed to unregister receiver", e);
+			}
 		}
 	}
 
@@ -134,6 +143,10 @@ public class HakYoBLEService extends Service implements BeaconConsumer {
 	}
 
 	protected void advertiseBluetoothDevice(boolean isEnabled) {
+		if (beaconTransmitter == null) {
+			return;
+		}
+
 		if (isEnabled) {
 			beaconTransmitter.startAdvertising(ADVERTISING_BEACON);
 		} else {
@@ -141,25 +154,31 @@ public class HakYoBLEService extends Service implements BeaconConsumer {
 		}
 	}
 
-	private void initializeBluetooth() {
+	private boolean initializeBluetooth() {
 		btAdapter = BluetoothAdapter.getDefaultAdapter();
 		if (btAdapter == null) {
 			// Bluetooth not supported by the device
-			Toast.makeText(this, "Bluetooth not found.", Toast.LENGTH_LONG)
-					.show();
-			stopSelf();
-			return;
+			if (mBLECallback != null) {
+				mBLECallback.onBluetoothNotSupported();
+			}
+			return false;
 		}
 
 		if (!btAdapter.isEnabled()) {
-			Toast.makeText(this, "Bluetooth is not enabled.", Toast.LENGTH_LONG)
-					.show();
-			stopSelf();
-			return;
+			if (mBLECallback != null) {
+				mBLECallback.onBluetoothNotEnabled();
+			}
+			return false;
 		}
+
+		return true;
 	}
 
 	private void scanBluetoothDevices(boolean isEnabled) {
+		if (beaconManager == null) {
+			return;
+		}
+
 		if (isEnabled) {
 			beaconManager.bind(this);
 		} else {
@@ -201,10 +220,14 @@ public class HakYoBLEService extends Service implements BeaconConsumer {
 		return mBinder;
 	}
 
+	public void setBLECallback(BLECallback callback) {
+		this.mBLECallback = callback;
+	}
+
 	public class LocalBinder extends Binder {
 
-		public HakYoBLEService getService() {
-			return HakYoBLEService.this;
+		public BLEService getService() {
+			return BLEService.this;
 		}
 	}
 }

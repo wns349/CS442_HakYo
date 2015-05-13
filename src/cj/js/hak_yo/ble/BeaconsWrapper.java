@@ -5,13 +5,13 @@ import java.util.Collection;
 
 import org.altbeacon.beacon.Beacon;
 
-public class HakYoBeaconsWrapper implements Serializable {
+public class BeaconsWrapper implements Serializable {
 
 	private static final long serialVersionUID = 5506959981344682710L;
 
 	private Collection<Beacon> foundBeacons;
 
-	public HakYoBeaconsWrapper(Collection<Beacon> beacons) {
+	public BeaconsWrapper(Collection<Beacon> beacons) {
 		this.foundBeacons = beacons;
 	}
 
