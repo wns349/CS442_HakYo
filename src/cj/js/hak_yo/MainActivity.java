@@ -183,8 +183,9 @@ public class MainActivity extends Activity implements BLECallback {
 						Beacon beacon = itr.next();
 						deviceListAdapter.addBeacon(beacon);
 					}
-					deviceListAdapter.notifyDataSetChanged();
 				}
+				
+				deviceListAdapter.notifyDataSetChanged();
 			}
 		});
 	}
