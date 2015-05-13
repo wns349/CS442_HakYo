@@ -1,5 +1,11 @@
 package cj.js.hak_yo;
 
+import java.util.Collection;
+import java.util.Iterator;
+
+import org.altbeacon.beacon.Beacon;
+import org.altbeacon.beacon.Region;
+
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningServiceInfo;
@@ -161,5 +167,25 @@ public class MainActivity extends Activity implements BLECallback {
 		Intent enableBtIntent = new Intent(
 				BluetoothAdapter.ACTION_REQUEST_ENABLE);
 		startActivityForResult(enableBtIntent, Const.REQUEST_ENABLE_BT);
+	}
+
+	@Override
+	public void onBeaconsFoundInRegion(final Collection<Beacon> beacons,
+			final Region region) {
+		runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				deviceListAdapter.clear();
+
+				if (beacons.size() > 0) {
+					Iterator<Beacon> itr = beacons.iterator();
+					while (itr.hasNext()) {
+						Beacon beacon = itr.next();
+						deviceListAdapter.addBeacon(beacon);
+					}
+					deviceListAdapter.notifyDataSetChanged();
+				}
+			}
+		});
 	}
 }

@@ -23,7 +23,6 @@ import android.os.IBinder;
 import android.os.RemoteException;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
-import android.widget.Toast;
 import cj.js.hak_yo.Const;
 import cj.js.hak_yo.HakYoBroadcastReceiver;
 import cj.js.hak_yo.MainActivity;
@@ -132,9 +131,12 @@ public class BLEService extends Service implements BeaconConsumer {
 	}
 
 	private void initializeBeacon() {
+		Log.d(TAG, "Initializing BeaconManager");
 		beaconManager = BeaconManager.getInstanceForApplication(this);
 
 		if (isAdvertisingSupportedDevice()) {
+			Log.d(TAG, "Initializing BeaconParser - Android Lollipop detected!");
+
 			BeaconParser beaconParser = new BeaconParser()
 					.setBeaconLayout(Const.BeaconConst.LAYOUT_STRING);
 			beaconTransmitter = new BeaconTransmitter(getApplicationContext(),
@@ -192,23 +194,17 @@ public class BLEService extends Service implements BeaconConsumer {
 			@Override
 			public void didRangeBeaconsInRegion(Collection<Beacon> beacons,
 					Region region) {
-				if (beacons.size() > 0) {
-
-					// Iterator<Beacon> beaconItr = beacons.iterator();
-					// while (beaconItr.hasNext()) {
-					// final Beacon beacon = beaconItr.next();
-					// Log.d(TAG,
-					// "Beacon found: " + beacon.getBluetoothName()
-					// + " / " + beacon.getBluetoothAddress()
-					// + " / " + beacon.getDistance() + " / "
-					// + beacon.getRssi());
-					// }
+				if (mBLECallback != null) {
+					mBLECallback.onBeaconsFoundInRegion(beacons, region);
+				} else {
+					Log.d(TAG, "Beacons found, but no BLE callback available.");
 				}
 			}
 		});
 
 		try {
-			Region region = new Region("myRangingUniqueId", null, null, null);
+			Region region = new Region(Const.BeaconConst.UNIQUE_REGION_ID,
+					null, null, null);
 			beaconManager.startRangingBeaconsInRegion(region);
 		} catch (RemoteException e) {
 			e.printStackTrace();

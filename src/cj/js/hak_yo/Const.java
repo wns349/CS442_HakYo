@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public final class Const {
-	
+
 	public static final int REQUEST_ENABLE_BT = 1842;
 
 	public static final String FOUND_BEACONS_BROADCAST_INTENT = "cj.js.hak_yo.FOUND_BEACONS";
@@ -20,5 +20,6 @@ public final class Const {
 		public static final int TX_POWER = -59;
 		public static final List<Long> DATA_FIELDS = Arrays
 				.asList(new Long[] { 0L });
+		public static final String UNIQUE_REGION_ID = "myRangingUniqueId";
 	}
 }

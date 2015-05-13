@@ -81,4 +81,8 @@ public class DeviceListAdapter extends BaseAdapter {
 			this.beacons.add(i, beacon);
 		}
 	}
+
+	public void clear() {
+		this.beacons.clear();
+	}
 }
