@@ -211,7 +211,7 @@ public class BLEService extends Service implements BeaconConsumer {
 				if (mBLECallback != null) {
 					mBLECallback.onBeaconsFoundInRegion(foundBeacons, region);
 				} else {
-					Log.d(TAG, "Beacons found, but no BLE callback available.");
+					sendNotification(foundBeacons, region);
 				}
 			}
 		});
@@ -225,6 +225,11 @@ public class BLEService extends Service implements BeaconConsumer {
 		}
 	}
 
+	protected void sendNotification(Collection<FoundBeacon> foundBeacons,
+			Region region) {
+		Log.d(TAG, "Beacons found, but no BLE callback available.");
+	}
+
 	protected Collection<FoundBeacon> filterFriends(Collection<Beacon> beacons) {
 		List<FoundBeacon> friendsFound = new ArrayList<FoundBeacon>();
 		Collection<FriendInfo> friendInfos = dbHelper.selectFriendInfos();
@@ -232,8 +237,7 @@ public class BLEService extends Service implements BeaconConsumer {
 		while (beaconIterator.hasNext()) {
 			Beacon beacon = beaconIterator.next();
 			Log.d(TAG, "Beacon Found: " + beacon.getBluetoothAddress() + " / "
-					+ beacon.getBluetoothName() + " / "
-					+ beacon.getId3().toString());
+					+ beacon.getBluetoothName());
 			for (FriendInfo friendInfo : friendInfos) {
 				if (isFriend(beacon, friendInfo)) {
 					friendsFound.add(new FoundBeacon(friendInfo, beacon));
@@ -268,4 +272,5 @@ public class BLEService extends Service implements BeaconConsumer {
 			return BLEService.this;
 		}
 	}
+
 }

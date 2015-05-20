@@ -14,7 +14,8 @@
             android:id="@+id/edt_mac_address"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:hint="Enter MAC Address" />
+            android:hint="Enter MAC Address"
+            android:text="E4:71:A6:E4:74:20" />
 
         <Button
             android:id="@+id/btn_add_friend"

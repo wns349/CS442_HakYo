@@ -37,18 +37,29 @@ public class MainActivity extends Activity implements BLECallback {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-
 		initializeViews();
-
+		
 		startBLEService();
 	}
 
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
+	}
 
+	@Override
+	protected void onResume() {
+		super.onResume();
+		startBLEService();
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+		
 		// Only unbind, do not stop the service
 		if (bleService != null && isServiceRunning(BLEService.class)) {
+			bleService.setBLECallback(null);
 			unbindService(bleServiceConnection);
 		}
 	}
