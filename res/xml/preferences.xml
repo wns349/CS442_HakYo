@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:key="pref_advertise"
+        android:summary="Advertise"
+        android:title="Advertise" />
+
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:key="pref_scan"
+        android:summary="Scan"
+        android:title="Scan" />
+
+</PreferenceScreen>

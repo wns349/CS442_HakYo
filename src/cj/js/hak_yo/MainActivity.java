@@ -24,6 +24,7 @@ import cj.js.hak_yo.ble.BLECallback;
 import cj.js.hak_yo.ble.BLEService;
 import cj.js.hak_yo.ble.FoundBeacon;
 import cj.js.hak_yo.friend.AddFriendActivity;
+import cj.js.hak_yo.setting.SettingActivity;
 
 public class MainActivity extends Activity implements BLECallback {
 	private static final String TAG = "CJS";
@@ -105,8 +106,9 @@ public class MainActivity extends Activity implements BLECallback {
 		btnSettings.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				Toast.makeText(getApplicationContext(), "TODO",
-						Toast.LENGTH_SHORT).show();
+				Intent intentSetting = new Intent(getApplicationContext(),
+						SettingActivity.class);
+				startActivity(intentSetting);
 			}
 		});
 

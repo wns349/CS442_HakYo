@@ -10,6 +10,7 @@ import org.altbeacon.beacon.BeaconConsumer;
 import org.altbeacon.beacon.BeaconManager;
 import org.altbeacon.beacon.BeaconParser;
 import org.altbeacon.beacon.BeaconTransmitter;
+import org.altbeacon.beacon.Identifier;
 import org.altbeacon.beacon.RangeNotifier;
 import org.altbeacon.beacon.Region;
 
@@ -217,7 +218,7 @@ public class BLEService extends Service implements BeaconConsumer {
 
 		try {
 			Region region = new Region(Const.BeaconConst.UNIQUE_REGION_ID,
-					null, null, null);
+					Identifier.parse(Const.BeaconConst.UUID_1), null, null);
 			beaconManager.startRangingBeaconsInRegion(region);
 		} catch (RemoteException e) {
 			e.printStackTrace();
@@ -231,7 +232,8 @@ public class BLEService extends Service implements BeaconConsumer {
 		while (beaconIterator.hasNext()) {
 			Beacon beacon = beaconIterator.next();
 			Log.d(TAG, "Beacon Found: " + beacon.getBluetoothAddress() + " / "
-					+ beacon.getBluetoothName() + " / "+beacon.getId3().toString());
+					+ beacon.getBluetoothName() + " / "
+					+ beacon.getId3().toString());
 			for (FriendInfo friendInfo : friendInfos) {
 				if (isFriend(beacon, friendInfo)) {
 					friendsFound.add(new FoundBeacon(friendInfo, beacon));
