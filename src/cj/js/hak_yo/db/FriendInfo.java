@@ -39,4 +39,9 @@ public class FriendInfo {
 	public void setRssi(int rssi) {
 		this.rssi = rssi;
 	}
+
+	@Override
+	public String toString() {
+		return alias + "/" + macAddress + "/" + rssi;
+	}
 }

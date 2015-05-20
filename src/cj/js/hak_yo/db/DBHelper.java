@@ -45,7 +45,7 @@ public class DBHelper extends SQLiteOpenHelper {
 		return sb.toString();
 	}
 
-	public long saveFriendInfo(FriendInfo friendInfo) {
+	public long insertFriendInfo(FriendInfo friendInfo) {
 		SQLiteDatabase db = getWritableDatabase();
 
 		ContentValues values = new ContentValues();
@@ -86,4 +86,5 @@ public class DBHelper extends SQLiteOpenHelper {
 			}
 		}
 	}
+
 }
