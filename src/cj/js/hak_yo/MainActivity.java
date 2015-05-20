@@ -3,7 +3,6 @@ package cj.js.hak_yo;
 import java.util.Collection;
 import java.util.Iterator;
 
-import org.altbeacon.beacon.Beacon;
 import org.altbeacon.beacon.Region;
 
 import android.app.Activity;
@@ -23,6 +22,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 import cj.js.hak_yo.ble.BLECallback;
 import cj.js.hak_yo.ble.BLEService;
+import cj.js.hak_yo.ble.FoundBeacon;
 import cj.js.hak_yo.friend.AddFriendActivity;
 
 public class MainActivity extends Activity implements BLECallback {
@@ -170,21 +170,21 @@ public class MainActivity extends Activity implements BLECallback {
 	}
 
 	@Override
-	public void onBeaconsFoundInRegion(final Collection<Beacon> beacons,
-			final Region region) {
+	public void onBeaconsFoundInRegion(
+			final Collection<FoundBeacon> foundBeacons, final Region region) {
 		runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
 				deviceListAdapter.clear();
 
-				if (beacons.size() > 0) {
-					Iterator<Beacon> itr = beacons.iterator();
+				if (foundBeacons.size() > 0) {
+					Iterator<FoundBeacon> itr = foundBeacons.iterator();
 					while (itr.hasNext()) {
-						Beacon beacon = itr.next();
-						deviceListAdapter.addBeacon(beacon);
+						FoundBeacon foundBeacon = itr.next();
+						deviceListAdapter.addBeacon(foundBeacon);
 					}
 				}
-				
+
 				deviceListAdapter.notifyDataSetChanged();
 			}
 		});

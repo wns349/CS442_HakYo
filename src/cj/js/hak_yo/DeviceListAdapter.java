@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
+import cj.js.hak_yo.ble.FoundBeacon;
 
 public class DeviceListAdapter extends BaseAdapter {
 
@@ -63,7 +64,8 @@ public class DeviceListAdapter extends BaseAdapter {
 		return view;
 	}
 
-	public void addBeacon(Beacon beacon) {
+	public void addBeacon(FoundBeacon foundBeacon) {
+		Beacon beacon = foundBeacon.getBeacon();
 		int i = 0;
 		boolean exist = false;
 		for (i = 0; i < this.beacons.size(); i++) {

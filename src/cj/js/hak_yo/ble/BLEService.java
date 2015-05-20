@@ -1,6 +1,9 @@
 package cj.js.hak_yo.ble;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 
 import org.altbeacon.beacon.Beacon;
 import org.altbeacon.beacon.BeaconConsumer;
@@ -26,6 +29,8 @@ import android.util.Log;
 import cj.js.hak_yo.Const;
 import cj.js.hak_yo.HakYoBroadcastReceiver;
 import cj.js.hak_yo.MainActivity;
+import cj.js.hak_yo.db.DBHelper;
+import cj.js.hak_yo.db.FriendInfo;
 
 public class BLEService extends Service implements BeaconConsumer {
 	private static final String TAG = "CJS";
@@ -37,6 +42,8 @@ public class BLEService extends Service implements BeaconConsumer {
 			.setId3(Const.BeaconConst.UUID_3)
 			.setManufacturer(Const.BeaconConst.MANUFACTURER)
 			.setTxPower(Const.BeaconConst.TX_POWER)
+			.setBluetoothAddress(BLEHelper.getInstance().getMacAddress())
+			.setBluetoothName(BLEHelper.getInstance().getMacAddress())
 			.setDataFields(Const.BeaconConst.DATA_FIELDS).build();
 
 	private BluetoothAdapter btAdapter = null;
@@ -48,10 +55,15 @@ public class BLEService extends Service implements BeaconConsumer {
 	private final LocalBinder mBinder = new LocalBinder();
 	private BLECallback mBLECallback = null;
 
+	private DBHelper dbHelper = null;
+
 	@Override
 	public void onCreate() {
 		super.onCreate();
 
+		if (dbHelper == null) {
+			dbHelper = new DBHelper(getApplicationContext());
+		}
 	}
 
 	@Override
@@ -157,7 +169,7 @@ public class BLEService extends Service implements BeaconConsumer {
 	}
 
 	private boolean initializeBluetooth() {
-		btAdapter = BluetoothAdapter.getDefaultAdapter();
+		btAdapter = BLEHelper.getInstance().getBluetoothAdapter();
 		if (btAdapter == null) {
 			// Bluetooth not supported by the device
 			if (mBLECallback != null) {
@@ -194,8 +206,9 @@ public class BLEService extends Service implements BeaconConsumer {
 			@Override
 			public void didRangeBeaconsInRegion(Collection<Beacon> beacons,
 					Region region) {
+				Collection<FoundBeacon> foundBeacons = filterFriends(beacons);
 				if (mBLECallback != null) {
-					mBLECallback.onBeaconsFoundInRegion(beacons, region);
+					mBLECallback.onBeaconsFoundInRegion(foundBeacons, region);
 				} else {
 					Log.d(TAG, "Beacons found, but no BLE callback available.");
 				}
@@ -209,6 +222,33 @@ public class BLEService extends Service implements BeaconConsumer {
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
+	}
+
+	protected Collection<FoundBeacon> filterFriends(Collection<Beacon> beacons) {
+		List<FoundBeacon> friendsFound = new ArrayList<FoundBeacon>();
+		Collection<FriendInfo> friendInfos = dbHelper.selectFriendInfos();
+		Iterator<Beacon> beaconIterator = beacons.iterator();
+		while (beaconIterator.hasNext()) {
+			Beacon beacon = beaconIterator.next();
+			Log.d(TAG, "Beacon Found: " + beacon.getBluetoothAddress() + " / "
+					+ beacon.getBluetoothName() + " / "+beacon.getId3().toString());
+			for (FriendInfo friendInfo : friendInfos) {
+				if (isFriend(beacon, friendInfo)) {
+					friendsFound.add(new FoundBeacon(friendInfo, beacon));
+					Log.d(TAG,
+							"Friend Beacon Found: "
+									+ beacon.getBluetoothAddress() + " / "
+									+ beacon.getBluetoothName());
+				}
+			}
+		}
+
+		return friendsFound;
+	}
+
+	private boolean isFriend(Beacon beacon, FriendInfo friendInfo) {
+		return friendInfo.getMacAddress().equalsIgnoreCase(
+				beacon.getBluetoothAddress());
 	}
 
 	@Override
