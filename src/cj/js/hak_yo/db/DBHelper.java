@@ -58,7 +58,7 @@ public class DBHelper extends SQLiteOpenHelper {
 		return newRowId;
 	}
 
-	public Collection<FriendInfo> loadFriendInfos() {
+	public Collection<FriendInfo> selectFriendInfos() {
 		SQLiteDatabase db = getReadableDatabase();
 
 		String[] projection = { Const.DatabaseConst.COLUMN_NAME_ALIAS,
