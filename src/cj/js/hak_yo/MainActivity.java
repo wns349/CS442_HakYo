@@ -55,13 +55,13 @@ public class MainActivity extends Activity implements BLECallback {
 	private void startBLEService() {
 		Intent hakYoService = new Intent(getApplicationContext(),
 				BLEService.class);
-		if (bleService == null && !isServiceRunning(BLEService.class)) {
-			bindService(hakYoService, bleServiceConnection,
-					Context.BIND_AUTO_CREATE);
-		}
-
 		if (!isServiceRunning(BLEService.class)) {
 			startService(hakYoService);
+		}
+
+		if (bleService == null) {
+			bindService(hakYoService, bleServiceConnection,
+					Context.BIND_AUTO_CREATE);
 		}
 	}
 
@@ -183,8 +183,9 @@ public class MainActivity extends Activity implements BLECallback {
 						Beacon beacon = itr.next();
 						deviceListAdapter.addBeacon(beacon);
 					}
-					deviceListAdapter.notifyDataSetChanged();
 				}
+				
+				deviceListAdapter.notifyDataSetChanged();
 			}
 		});
 	}

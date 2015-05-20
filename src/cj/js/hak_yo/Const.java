@@ -22,4 +22,17 @@ public final class Const {
 				.asList(new Long[] { 0L });
 		public static final String UNIQUE_REGION_ID = "myRangingUniqueId";
 	}
+
+	public static class DatabaseConst {
+		public static final String TABLE_NAME = "FriendInfo";
+		public static final String COLUMN_NAME_MAC_ADDR = "MAC";
+		public static final String COLUMN_NAME_ALIAS = "alias";
+		public static final String COLUMN_NAME_RSSI = "rssi";
+
+		public static final int DATABASE_VERSION = 1;
+		public static final String DATABASE_NAME = "HakYo.db";
+
+		public static final String TYPE_TEXT = "TEXT";
+		public static final String TYPE_INTEGER = "INTEGER";
+	}
 }
