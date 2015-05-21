@@ -33,7 +33,7 @@ import cj.js.hak_yo.MainActivity;
 import cj.js.hak_yo.db.DBHelper;
 import cj.js.hak_yo.db.FriendInfo;
 
-public class BLEService extends Service implements BeaconConsumer {
+public class BLEService extends Service implements BeaconConsumer, Runnable {
 	private static final String TAG = "CJS";
 
 	private static final int NOTIFICATION_ID = 1357;
@@ -58,23 +58,29 @@ public class BLEService extends Service implements BeaconConsumer {
 
 	private DBHelper dbHelper = null;
 
+	private Thread selfThread = null;
+
 	@Override
 	public void onCreate() {
 		super.onCreate();
 
+		// Initialize DB Helper
 		if (dbHelper == null) {
 			dbHelper = new DBHelper(getApplicationContext());
 		}
+
+		// Run thread
+		selfThread = new Thread(this);
+		selfThread.start();
 	}
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
-		return super.onStartCommand(intent, flags, startId);
+		return Service.START_STICKY;
 	}
 
 	@Override
 	public void onDestroy() {
-		super.onDestroy();
 
 		if (isAdvertisingSupportedDevice()) {
 			advertiseBluetoothDevice(false);
@@ -84,6 +90,13 @@ public class BLEService extends Service implements BeaconConsumer {
 		showRunningNotification(false);
 
 		registerBroadcastReceiver(false);
+
+		// Stop thread
+		if (selfThread != null && selfThread.isAlive()) {
+			selfThread.interrupt();
+		}
+
+		super.onDestroy();
 	}
 
 	public void startBLE() {
@@ -271,6 +284,19 @@ public class BLEService extends Service implements BeaconConsumer {
 		public BLEService getService() {
 			return BLEService.this;
 		}
+	}
+
+	@Override
+	public void run() {
+		while (true) {
+			try {
+				Log.d(TAG, "BLEService is alive");
+				Thread.sleep(Const.BLE_SERVICE_SLEEP_TIME);
+			} catch (Exception e) {
+				Log.e(TAG, "Error ", e);
+			}
+		}
+
 	}
 
 }

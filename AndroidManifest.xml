@@ -17,9 +17,9 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:launchMode="standard"
             android:name=".MainActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:launchMode="standard" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -27,7 +27,8 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".ble.BLEService" >
+        <service
+            android:name=".ble.BLEService">
         </service>
 
         <receiver
@@ -37,7 +38,9 @@
                 <action android:name="android.bluetooth.adapter.action.STATE_CHANGED" />
             </intent-filter>
         </receiver>
-        <activity android:name=".friend.AddFriendActivity"></activity>
+
+        <activity android:name=".friend.AddFriendActivity" >
+        </activity>
     </application>
 
 </manifest>

@@ -10,6 +10,7 @@ public final class Const {
 
 	public static final String FOUND_BEACONS_BROADCAST_INTENT = "cj.js.hak_yo.FOUND_BEACONS";
 	public static final String FOUND_BEACONS_KEY = "found.beacons";
+	public static final long BLE_SERVICE_SLEEP_TIME = 500L;
 
 	public static class BeaconConst {
 		public static final String UUID_1 = "e6ed2836-e641-414b-b3ce-b200413845d3";

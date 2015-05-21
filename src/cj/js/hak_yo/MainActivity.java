@@ -38,8 +38,6 @@ public class MainActivity extends Activity implements BLECallback {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		initializeViews();
-		
-		startBLEService();
 	}
 
 	@Override
@@ -56,7 +54,7 @@ public class MainActivity extends Activity implements BLECallback {
 	@Override
 	protected void onPause() {
 		super.onPause();
-		
+
 		// Only unbind, do not stop the service
 		if (bleService != null && isServiceRunning(BLEService.class)) {
 			bleService.setBLECallback(null);
@@ -71,10 +69,8 @@ public class MainActivity extends Activity implements BLECallback {
 			startService(hakYoService);
 		}
 
-		if (bleService == null) {
-			bindService(hakYoService, bleServiceConnection,
-					Context.BIND_AUTO_CREATE);
-		}
+		bindService(hakYoService, bleServiceConnection,
+				Context.BIND_AUTO_CREATE);
 	}
 
 	private void stopBLEService() {
