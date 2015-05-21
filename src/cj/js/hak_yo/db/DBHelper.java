@@ -35,7 +35,7 @@ public class DBHelper extends SQLiteOpenHelper {
 		sb.append(Const.DatabaseConst.TABLE_NAME);
 		sb.append(" (");
 		sb.append(Const.DatabaseConst.COLUMN_NAME_MAC_ADDR).append(" ")
-				.append(Const.DatabaseConst.TYPE_TEXT).append(",");
+				.append(Const.DatabaseConst.TYPE_TEXT).append(" PRIMARY KEY,");
 		sb.append(Const.DatabaseConst.COLUMN_NAME_ALIAS).append(" ")
 				.append(Const.DatabaseConst.TYPE_TEXT).append(",");
 		sb.append(Const.DatabaseConst.COLUMN_NAME_RSSI).append(" ")
@@ -43,24 +43,6 @@ public class DBHelper extends SQLiteOpenHelper {
 		sb.append(", UNIQUE (");
 		sb.append(Const.DatabaseConst.COLUMN_NAME_MAC_ADDR);
 		sb.append("))");
-
-		return sb.toString();
-	}
-
-	private String getSQLInsert(FriendInfo friendInfo) {
-		StringBuilder sb = new StringBuilder();
-
-		sb.append("INSERT OR IGNORE INTO ");
-		sb.append(Const.DatabaseConst.TABLE_NAME);
-		sb.append("(");
-		sb.append(Const.DatabaseConst.COLUMN_NAME_ALIAS).append(",");
-		sb.append(Const.DatabaseConst.COLUMN_NAME_MAC_ADDR).append(",");
-		sb.append(Const.DatabaseConst.COLUMN_NAME_RSSI);
-		sb.append(") VALUES (");
-		sb.append(friendInfo.getAlias()).append(",");
-		sb.append(friendInfo.getMacAddress()).append(",");
-		sb.append(friendInfo.getRssi());
-		sb.append(")");
 
 		return sb.toString();
 	}
@@ -74,7 +56,8 @@ public class DBHelper extends SQLiteOpenHelper {
 				friendInfo.getMacAddress());
 		values.put(Const.DatabaseConst.COLUMN_NAME_RSSI, friendInfo.getRssi());
 
-		long newRowId = db.insert(Const.DatabaseConst.TABLE_NAME, null, values);
+		long newRowId = db.insertWithOnConflict(Const.DatabaseConst.TABLE_NAME,
+				null, values, SQLiteDatabase.CONFLICT_REPLACE);
 
 		return newRowId;
 	}
