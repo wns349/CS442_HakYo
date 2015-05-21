@@ -27,8 +27,7 @@
             </intent-filter>
         </activity>
 
-        <service
-            android:name=".ble.BLEService">
+        <service android:name=".ble.BLEService" >
         </service>
 
         <receiver
@@ -40,6 +39,8 @@
         </receiver>
 
         <activity android:name=".friend.AddFriendActivity" >
+        </activity>
+        <activity android:name=".setting.SettingActivity" >
         </activity>
     </application>
 
