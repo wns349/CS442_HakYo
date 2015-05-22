@@ -56,6 +56,7 @@ public class BLEService extends Service implements BeaconConsumer, Runnable {
 	private final LocalBinder mBinder = new LocalBinder();
 	private BLECallback mBLECallback = null;
 
+	private NotificationHelper notiHelper = null;
 	private DBHelper dbHelper = null;
 
 	private Thread selfThread = null;
@@ -67,6 +68,11 @@ public class BLEService extends Service implements BeaconConsumer, Runnable {
 		// Initialize DB Helper
 		if (dbHelper == null) {
 			dbHelper = new DBHelper(getApplicationContext());
+		}
+
+		// Initialize notification helper
+		if (notiHelper == null) {
+			notiHelper = new NotificationHelper(getApplicationContext());
 		}
 
 		// Run thread
@@ -222,9 +228,11 @@ public class BLEService extends Service implements BeaconConsumer, Runnable {
 					Region region) {
 				Collection<FoundBeacon> foundBeacons = filterFriends(beacons);
 				if (mBLECallback != null) {
+					// Activity is running
 					mBLECallback.onBeaconsFoundInRegion(foundBeacons, region);
 				} else {
-					sendNotification(foundBeacons, region);
+					// Activity is not running
+					notiHelper.sendNotification(foundBeacons, region);
 				}
 			}
 		});
@@ -238,19 +246,15 @@ public class BLEService extends Service implements BeaconConsumer, Runnable {
 		}
 	}
 
-	protected void sendNotification(Collection<FoundBeacon> foundBeacons,
-			Region region) {
-		Log.d(TAG, "Beacons found, but no BLE callback available.");
-	}
-
-	protected Collection<FoundBeacon> filterFriends(Collection<Beacon> beacons) {
+	private Collection<FoundBeacon> filterFriends(Collection<Beacon> beacons) {
 		List<FoundBeacon> friendsFound = new ArrayList<FoundBeacon>();
 		Collection<FriendInfo> friendInfos = dbHelper.selectFriendInfos();
 		Iterator<Beacon> beaconIterator = beacons.iterator();
 		while (beaconIterator.hasNext()) {
 			Beacon beacon = beaconIterator.next();
 			Log.d(TAG, "Beacon Found: " + beacon.getBluetoothAddress() + " / "
-					+ beacon.getBluetoothName());
+					+ beacon.getBluetoothName() + " / "
+					+ beacon.getId1().toUuidString());
 			for (FriendInfo friendInfo : friendInfos) {
 				if (isFriend(beacon, friendInfo)) {
 					friendsFound.add(new FoundBeacon(friendInfo, beacon));
