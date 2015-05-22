@@ -10,7 +10,6 @@ import org.altbeacon.beacon.BeaconConsumer;
 import org.altbeacon.beacon.BeaconManager;
 import org.altbeacon.beacon.BeaconParser;
 import org.altbeacon.beacon.BeaconTransmitter;
-import org.altbeacon.beacon.Identifier;
 import org.altbeacon.beacon.RangeNotifier;
 import org.altbeacon.beacon.Region;
 
@@ -32,20 +31,14 @@ import cj.js.hak_yo.HakYoBroadcastReceiver;
 import cj.js.hak_yo.MainActivity;
 import cj.js.hak_yo.db.DBHelper;
 import cj.js.hak_yo.db.FriendInfo;
+import cj.js.hak_yo.setting.SettingHelper;
+import cj.js.hak_yo.util.BLEUtil;
+import cj.js.hak_yo.util.UUIDUtil;
 
 public class BLEService extends Service implements BeaconConsumer, Runnable {
 	private static final String TAG = "CJS";
 
 	private static final int NOTIFICATION_ID = 1357;
-
-	private final Beacon ADVERTISING_BEACON = new Beacon.Builder()
-			.setId1(Const.BeaconConst.UUID_1).setId2(Const.BeaconConst.UUID_2)
-			.setId3(Const.BeaconConst.UUID_3)
-			.setManufacturer(Const.BeaconConst.MANUFACTURER)
-			.setTxPower(Const.BeaconConst.TX_POWER)
-			.setBluetoothAddress(BLEHelper.getInstance().getMacAddress())
-			.setBluetoothName(BLEHelper.getInstance().getMacAddress())
-			.setDataFields(Const.BeaconConst.DATA_FIELDS).build();
 
 	private BluetoothAdapter btAdapter = null;
 	private BeaconManager beaconManager = null;
@@ -58,6 +51,7 @@ public class BLEService extends Service implements BeaconConsumer, Runnable {
 
 	private NotificationHelper notiHelper = null;
 	private DBHelper dbHelper = null;
+	private SettingHelper settingHelper = null;
 
 	private Thread selfThread = null;
 
@@ -66,14 +60,13 @@ public class BLEService extends Service implements BeaconConsumer, Runnable {
 		super.onCreate();
 
 		// Initialize DB Helper
-		if (dbHelper == null) {
-			dbHelper = new DBHelper(getApplicationContext());
-		}
+		dbHelper = new DBHelper(getApplicationContext());
 
 		// Initialize notification helper
-		if (notiHelper == null) {
-			notiHelper = new NotificationHelper(getApplicationContext());
-		}
+		notiHelper = new NotificationHelper(getApplicationContext());
+
+		// Initialize setting helper
+		settingHelper = new SettingHelper(getApplicationContext());
 
 		// Run thread
 		selfThread = new Thread(this);
@@ -103,6 +96,17 @@ public class BLEService extends Service implements BeaconConsumer, Runnable {
 		}
 
 		super.onDestroy();
+	}
+
+	private Beacon createAdvertisingBeacon() {
+		String uuid = UUIDUtil.toUUID(BLEUtil.getMacAddress()).toString();
+
+		return new Beacon.Builder().setId1(uuid)
+				.setId2(Const.BeaconConst.UUID_2)
+				.setId3(Const.BeaconConst.UUID_3)
+				.setManufacturer(Const.BeaconConst.MANUFACTURER)
+				.setTxPower(Const.BeaconConst.TX_POWER)
+				.setDataFields(Const.BeaconConst.DATA_FIELDS).build();
 	}
 
 	public void startBLE() {
@@ -182,14 +186,14 @@ public class BLEService extends Service implements BeaconConsumer, Runnable {
 		}
 
 		if (isEnabled) {
-			beaconTransmitter.startAdvertising(ADVERTISING_BEACON);
+			beaconTransmitter.startAdvertising(createAdvertisingBeacon());
 		} else {
 			beaconTransmitter.stopAdvertising();
 		}
 	}
 
 	private boolean initializeBluetooth() {
-		btAdapter = BLEHelper.getInstance().getBluetoothAdapter();
+		btAdapter = BLEUtil.getBluetoothAdapter();
 		if (btAdapter == null) {
 			// Bluetooth not supported by the device
 			if (mBLECallback != null) {
@@ -239,7 +243,7 @@ public class BLEService extends Service implements BeaconConsumer, Runnable {
 
 		try {
 			Region region = new Region(Const.BeaconConst.UNIQUE_REGION_ID,
-					Identifier.parse(Const.BeaconConst.UUID_1), null, null);
+					null, null, null);
 			beaconManager.startRangingBeaconsInRegion(region);
 		} catch (RemoteException e) {
 			e.printStackTrace();
@@ -270,8 +274,8 @@ public class BLEService extends Service implements BeaconConsumer, Runnable {
 	}
 
 	private boolean isFriend(Beacon beacon, FriendInfo friendInfo) {
-		return friendInfo.getMacAddress().equalsIgnoreCase(
-				beacon.getBluetoothAddress());
+		return friendInfo.getUUID().equalsIgnoreCase(
+				beacon.getId1().toUuidString());
 	}
 
 	@Override

@@ -34,14 +34,14 @@ public class DBHelper extends SQLiteOpenHelper {
 		sb.append("CREATE TABLE ");
 		sb.append(Const.DatabaseConst.TABLE_NAME);
 		sb.append(" (");
-		sb.append(Const.DatabaseConst.COLUMN_NAME_MAC_ADDR).append(" ")
+		sb.append(Const.DatabaseConst.COLUMN_NAME_UUID).append(" ")
 				.append(Const.DatabaseConst.TYPE_TEXT).append(" PRIMARY KEY,");
 		sb.append(Const.DatabaseConst.COLUMN_NAME_ALIAS).append(" ")
 				.append(Const.DatabaseConst.TYPE_TEXT).append(",");
 		sb.append(Const.DatabaseConst.COLUMN_NAME_RSSI).append(" ")
 				.append(Const.DatabaseConst.TYPE_INTEGER);
 		sb.append(", UNIQUE (");
-		sb.append(Const.DatabaseConst.COLUMN_NAME_MAC_ADDR);
+		sb.append(Const.DatabaseConst.COLUMN_NAME_UUID);
 		sb.append("))");
 
 		return sb.toString();
@@ -52,8 +52,8 @@ public class DBHelper extends SQLiteOpenHelper {
 
 		ContentValues values = new ContentValues();
 		values.put(Const.DatabaseConst.COLUMN_NAME_ALIAS, friendInfo.getAlias());
-		values.put(Const.DatabaseConst.COLUMN_NAME_MAC_ADDR,
-				friendInfo.getMacAddress());
+		values.put(Const.DatabaseConst.COLUMN_NAME_UUID,
+				friendInfo.getUUID());
 		values.put(Const.DatabaseConst.COLUMN_NAME_RSSI, friendInfo.getRssi());
 
 		long newRowId = db.insertWithOnConflict(Const.DatabaseConst.TABLE_NAME,
@@ -66,7 +66,7 @@ public class DBHelper extends SQLiteOpenHelper {
 		SQLiteDatabase db = getReadableDatabase();
 
 		String[] projection = { Const.DatabaseConst.COLUMN_NAME_ALIAS,
-				Const.DatabaseConst.COLUMN_NAME_MAC_ADDR,
+				Const.DatabaseConst.COLUMN_NAME_UUID,
 				Const.DatabaseConst.COLUMN_NAME_RSSI };
 
 		Cursor c = null;

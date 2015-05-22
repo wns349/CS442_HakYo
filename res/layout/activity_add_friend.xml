@@ -12,13 +12,15 @@
 
         <EditText
             android:id="@+id/edt_mac_address"
+            android:layout_weight="1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:hint="Enter MAC Address"
-            android:text="E4:71:A6:E4:74:20" />
+            android:text="1f3ec053-977f-3611-98c2-a7eed4701c6f" />
 
         <Button
             android:id="@+id/btn_add_friend"
+            android:layout_weight="1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="ADD FRIEND" />

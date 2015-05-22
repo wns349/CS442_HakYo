@@ -15,9 +15,9 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import cj.js.hak_yo.R;
-import cj.js.hak_yo.ble.BLEHelper;
 import cj.js.hak_yo.db.DBHelper;
 import cj.js.hak_yo.db.FriendInfo;
+import cj.js.hak_yo.util.BLEUtil;
 
 public class AddFriendActivity extends Activity {
 
@@ -90,7 +90,7 @@ public class AddFriendActivity extends Activity {
 
 		// Textview
 		TextView txtMyMacAddr = (TextView) findViewById(R.id.txt_my_mac_addr);
-		txtMyMacAddr.setText(BLEHelper.getInstance().getMacAddress());
+		txtMyMacAddr.setText(BLEUtil.getMacAddress());
 
 		// List View
 		ListView listFriends = (ListView) findViewById(R.id.list_friends);

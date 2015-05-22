@@ -60,6 +60,11 @@ public class NotificationHelper {
 				.getLastNotificationSentAt()) <= NOTIFICATION_INTERVAL_THRESHOLD) {
 			return false;
 		}
+		
+		// If found beacons is null, ignore
+		if(foundBeacons.size() <= 0){
+			return false;
+		}
 
 		// Check if beacons are updated
 		if (LastUpdated.getFoundBeacons() != null

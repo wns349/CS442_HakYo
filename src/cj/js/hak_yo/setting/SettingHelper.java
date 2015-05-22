@@ -8,9 +8,21 @@ public class SettingHelper {
 
 	private final SharedPreferences sp;
 
+	protected enum Keys {
+		MyUUID,
+
+	}
+
 	public SettingHelper(Context context) {
 		sp = PreferenceManager.getDefaultSharedPreferences(context);
 	}
 
-	
+	public void saveMyUUID(String myUUID) {
+		sp.edit().putString(Keys.MyUUID.name(), myUUID).commit();
+	}
+
+	public String getMyUUID() {
+		return sp.getString(Keys.MyUUID.name(), null);
+	}
+
 }

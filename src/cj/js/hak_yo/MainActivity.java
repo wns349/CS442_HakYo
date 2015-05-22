@@ -19,12 +19,15 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 import cj.js.hak_yo.ble.BLECallback;
 import cj.js.hak_yo.ble.BLEService;
 import cj.js.hak_yo.ble.FoundBeacon;
 import cj.js.hak_yo.friend.AddFriendActivity;
 import cj.js.hak_yo.setting.SettingActivity;
+import cj.js.hak_yo.util.BLEUtil;
+import cj.js.hak_yo.util.UUIDUtil;
 
 public class MainActivity extends Activity implements BLECallback {
 	private static final String TAG = "CJS";
@@ -124,6 +127,10 @@ public class MainActivity extends Activity implements BLECallback {
 		deviceListAdapter = new DeviceListAdapter(this);
 		listDevices.setAdapter(deviceListAdapter);
 		deviceListAdapter.notifyDataSetChanged();
+
+		// My UUID
+		TextView txtMyUUID = (TextView) findViewById(R.id.txt_my_UUID);
+		txtMyUUID.setText(UUIDUtil.toUUID(BLEUtil.getMacAddress()).toString());
 	}
 
 	private ServiceConnection bleServiceConnection = new ServiceConnection() {

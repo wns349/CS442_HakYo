@@ -1,7 +1,7 @@
 package cj.js.hak_yo.db;
 
 public class FriendInfo {
-	private String macAddress;
+	private String uuid;
 	private String alias;
 	private int rssi;
 
@@ -9,19 +9,19 @@ public class FriendInfo {
 
 	}
 
-	public FriendInfo(String alias, String macAddress, int rssi) {
+	public FriendInfo(String alias, String uuid, int rssi) {
 		setAlias(alias);
-		setMacAddress(macAddress);
+		setUUID(uuid);
 		setRssi(rssi);
 
 	}
 
-	public String getMacAddress() {
-		return macAddress;
+	public String getUUID() {
+		return uuid;
 	}
 
-	public void setMacAddress(String macAddress) {
-		this.macAddress = macAddress;
+	public void setUUID(String macAddress) {
+		this.uuid = macAddress;
 	}
 
 	public String getAlias() {
@@ -42,6 +42,6 @@ public class FriendInfo {
 
 	@Override
 	public String toString() {
-		return alias + "/" + macAddress + "/" + rssi;
+		return alias + "/" + uuid + "/" + rssi;
 	}
 }

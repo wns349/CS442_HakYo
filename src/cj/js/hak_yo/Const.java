@@ -13,7 +13,6 @@ public final class Const {
 	public static final long BLE_SERVICE_SLEEP_TIME = 500L;
 
 	public static class BeaconConst {
-		public static final String UUID_1 = "e6ed2836-e641-414b-b3ce-b200413845d3";
 		public static final String UUID_2 = "1";
 		public static final String UUID_3 = "2";
 		public static final String LAYOUT_STRING = "m:2-3=beac,i:4-19,i:20-21,i:22-23,p:24-24,d:25-25";
@@ -27,7 +26,7 @@ public final class Const {
 
 	public static class DatabaseConst {
 		public static final String TABLE_NAME = "FriendInfo";
-		public static final String COLUMN_NAME_MAC_ADDR = "MAC";
+		public static final String COLUMN_NAME_UUID = "UUID";
 		public static final String COLUMN_NAME_ALIAS = "alias";
 		public static final String COLUMN_NAME_RSSI = "rssi";
 
