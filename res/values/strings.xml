@@ -6,4 +6,6 @@
     <string name="pref_scan">Scan</string>
     <string name="pref_advertise">Advertise</string>
 
+    <string name="splash_logo_description">Splash</string>
+    <string name="splash_title">Hak-Yo</string>
 </resources>

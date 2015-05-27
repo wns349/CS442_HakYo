@@ -10,7 +10,11 @@
 
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
-    <instrumentation android:targetPackage="cj.js.hak_yo" android:name="android.test.InstrumentationTestRunner"></instrumentation>
+
+    <instrumentation
+        android:name="android.test.InstrumentationTestRunner"
+        android:targetPackage="cj.js.hak_yo" >
+    </instrumentation>
 
     <application
         android:allowBackup="true"
@@ -18,14 +22,27 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".MainActivity"
+            android:name=".SplashActivity"
             android:label="@string/app_name"
-            android:launchMode="standard" >
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Black.NoTitleBar" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".MainActivity"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name=".friend.AddFriendActivity"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name=".setting.SettingActivity"
+            android:screenOrientation="portrait" >
         </activity>
 
         <service android:name=".ble.BLEService" >
@@ -39,11 +56,9 @@
             </intent-filter>
         </receiver>
 
-        <activity android:name=".friend.AddFriendActivity" >
-        </activity>
-        <activity android:name=".setting.SettingActivity" >
-        </activity>
-        <uses-library android:name="android.test.runner" android:required="true"/>
+        <uses-library
+            android:name="android.test.runner"
+            android:required="true" />
     </application>
 
 </manifest>

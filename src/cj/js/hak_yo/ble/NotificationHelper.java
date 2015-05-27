@@ -19,7 +19,7 @@ import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import cj.js.hak_yo.Const;
-import cj.js.hak_yo.MainActivity;
+import cj.js.hak_yo.SplashActivity;
 
 public class NotificationHelper {
 	private static final String TAG = "CJS_Noti";
@@ -119,7 +119,7 @@ public class NotificationHelper {
 				.setContentTitle("Say YO~!")
 				.setContentText(
 						foundBeacon.getFriendInfo().getAlias() + " is nearby!");
-		Intent mainIntent = new Intent(context, MainActivity.class);
+		Intent mainIntent = new Intent(context, SplashActivity.class);
 		PendingIntent mainPendingIntent = PendingIntent.getActivity(context, 0,
 				mainIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 		builder.setContentIntent(mainPendingIntent);

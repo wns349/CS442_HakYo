@@ -28,7 +28,7 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import cj.js.hak_yo.Const;
 import cj.js.hak_yo.HakYoBroadcastReceiver;
-import cj.js.hak_yo.MainActivity;
+import cj.js.hak_yo.SplashActivity;
 import cj.js.hak_yo.db.DBHelper;
 import cj.js.hak_yo.db.FriendInfo;
 import cj.js.hak_yo.setting.SettingHelper;
@@ -147,10 +147,10 @@ public class BLEService extends Service implements BeaconConsumer, Runnable {
 					this).setSmallIcon(android.R.drawable.btn_star)
 					.setContentTitle("Hak-Yo!")
 					.setContentText("Hak-Yo is running!");
-			Intent resultIntent = new Intent(this, MainActivity.class);
+			Intent resultIntent = new Intent(this, SplashActivity.class);
 
 			TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-			stackBuilder.addParentStack(MainActivity.class);
+			stackBuilder.addParentStack(SplashActivity.class);
 			stackBuilder.addNextIntent(resultIntent);
 			PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(
 					0, PendingIntent.FLAG_UPDATE_CURRENT);
