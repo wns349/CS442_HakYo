@@ -13,22 +13,16 @@ import org.altbeacon.beacon.BeaconTransmitter;
 import org.altbeacon.beacon.RangeNotifier;
 import org.altbeacon.beacon.Region;
 
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.Service;
-import android.app.TaskStackBuilder;
 import android.bluetooth.BluetoothAdapter;
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Binder;
 import android.os.IBinder;
 import android.os.RemoteException;
-import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import cj.js.hak_yo.Const;
 import cj.js.hak_yo.HakYoBroadcastReceiver;
-import cj.js.hak_yo.SplashActivity;
 import cj.js.hak_yo.db.DBHelper;
 import cj.js.hak_yo.db.FriendInfo;
 import cj.js.hak_yo.setting.SettingHelper;
@@ -37,8 +31,6 @@ import cj.js.hak_yo.util.UUIDUtil;
 
 public class BLEService extends Service implements BeaconConsumer, Runnable {
 	private static final String TAG = "CJS";
-
-	private static final int NOTIFICATION_ID = 1357;
 
 	private static BLEService instance = null;
 
@@ -90,8 +82,6 @@ public class BLEService extends Service implements BeaconConsumer, Runnable {
 		}
 		scanBluetoothDevices(false);
 
-		showRunningNotification(false);
-
 		registerBroadcastReceiver(false);
 
 		// Stop thread
@@ -118,8 +108,6 @@ public class BLEService extends Service implements BeaconConsumer, Runnable {
 	}
 
 	public void startBLE() {
-		showRunningNotification(true);
-
 		if (initializeBluetooth()) {
 			initializeBeacon();
 			startBeacon();
@@ -137,28 +125,6 @@ public class BLEService extends Service implements BeaconConsumer, Runnable {
 			} catch (IllegalArgumentException e) {
 				Log.e(TAG, "Failed to unregister receiver", e);
 			}
-		}
-	}
-
-	private void showRunningNotification(boolean isShow) {
-		NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-		if (isShow) {
-			NotificationCompat.Builder nBuilder = new NotificationCompat.Builder(
-					this).setSmallIcon(android.R.drawable.btn_star)
-					.setContentTitle("Hak-Yo!")
-					.setContentText("Hak-Yo is running!");
-			Intent resultIntent = new Intent(this, SplashActivity.class);
-
-			TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-			stackBuilder.addParentStack(SplashActivity.class);
-			stackBuilder.addNextIntent(resultIntent);
-			PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(
-					0, PendingIntent.FLAG_UPDATE_CURRENT);
-			nBuilder.setContentIntent(resultPendingIntent);
-
-			mNotificationManager.notify(NOTIFICATION_ID, nBuilder.build());
-		} else {
-			mNotificationManager.cancel(NOTIFICATION_ID);
 		}
 	}
 
