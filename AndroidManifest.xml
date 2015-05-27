@@ -10,6 +10,7 @@
 
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <instrumentation android:targetPackage="cj.js.hak_yo" android:name="android.test.InstrumentationTestRunner"></instrumentation>
 
     <application
         android:allowBackup="true"
@@ -42,6 +43,7 @@
         </activity>
         <activity android:name=".setting.SettingActivity" >
         </activity>
+        <uses-library android:name="android.test.runner" android:required="true"/>
     </application>
 
 </manifest>

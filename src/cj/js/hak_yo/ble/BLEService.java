@@ -40,6 +40,8 @@ public class BLEService extends Service implements BeaconConsumer, Runnable {
 
 	private static final int NOTIFICATION_ID = 1357;
 
+	private static BLEService instance = null;
+
 	private BluetoothAdapter btAdapter = null;
 	private BeaconManager beaconManager = null;
 	private BeaconTransmitter beaconTransmitter = null;
@@ -58,6 +60,8 @@ public class BLEService extends Service implements BeaconConsumer, Runnable {
 	@Override
 	public void onCreate() {
 		super.onCreate();
+
+		instance = this;
 
 		// Initialize DB Helper
 		dbHelper = new DBHelper(getApplicationContext());
@@ -81,7 +85,7 @@ public class BLEService extends Service implements BeaconConsumer, Runnable {
 	@Override
 	public void onDestroy() {
 
-		if (isAdvertisingSupportedDevice()) {
+		if (BLEUtil.isAdvertisingSupportedDevice()) {
 			advertiseBluetoothDevice(false);
 		}
 		scanBluetoothDevices(false);
@@ -96,6 +100,10 @@ public class BLEService extends Service implements BeaconConsumer, Runnable {
 		}
 
 		super.onDestroy();
+	}
+
+	public static BLEService getInstance() {
+		return instance;
 	}
 
 	private Beacon createAdvertisingBeacon() {
@@ -155,22 +163,18 @@ public class BLEService extends Service implements BeaconConsumer, Runnable {
 	}
 
 	private void startBeacon() {
-		if (isAdvertisingSupportedDevice()) {
+		if (BLEUtil.isAdvertisingSupportedDevice()) {
 			advertiseBluetoothDevice(true);
 		}
 
 		scanBluetoothDevices(true);
 	}
 
-	private boolean isAdvertisingSupportedDevice() {
-		return (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP);
-	}
-
 	private void initializeBeacon() {
 		Log.d(TAG, "Initializing BeaconManager");
 		beaconManager = BeaconManager.getInstanceForApplication(this);
 
-		if (isAdvertisingSupportedDevice()) {
+		if (BLEUtil.isAdvertisingSupportedDevice()) {
 			Log.d(TAG, "Initializing BeaconParser - Android Lollipop detected!");
 
 			BeaconParser beaconParser = new BeaconParser()
@@ -180,12 +184,12 @@ public class BLEService extends Service implements BeaconConsumer, Runnable {
 		}
 	}
 
-	protected void advertiseBluetoothDevice(boolean isEnabled) {
+	public void advertiseBluetoothDevice(boolean isEnabled) {
 		if (beaconTransmitter == null) {
 			return;
 		}
 
-		if (isEnabled) {
+		if (isEnabled && settingHelper.isAdvertiseEnabled()) {
 			beaconTransmitter.startAdvertising(createAdvertisingBeacon());
 		} else {
 			beaconTransmitter.stopAdvertising();
@@ -212,12 +216,12 @@ public class BLEService extends Service implements BeaconConsumer, Runnable {
 		return true;
 	}
 
-	private void scanBluetoothDevices(boolean isEnabled) {
+	public void scanBluetoothDevices(boolean isEnabled) {
 		if (beaconManager == null) {
 			return;
 		}
 
-		if (isEnabled) {
+		if (isEnabled && settingHelper.isScanEnabled()) {
 			beaconManager.bind(this);
 		} else {
 			beaconManager.unbind(this);
@@ -285,6 +289,10 @@ public class BLEService extends Service implements BeaconConsumer, Runnable {
 
 	public void setBLECallback(BLECallback callback) {
 		this.mBLECallback = callback;
+	}
+
+	public BLECallback getBLECallback() {
+		return this.mBLECallback;
 	}
 
 	public class LocalBinder extends Binder {

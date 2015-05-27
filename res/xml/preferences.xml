@@ -3,14 +3,13 @@
 
     <CheckBoxPreference
         android:defaultValue="true"
-        android:key="pref_advertise"
-        android:summary="Advertise"
-        android:title="Advertise" />
-
+        android:key="@string/pref_advertise"
+        android:summary="@string/pref_advertise"
+        android:title="@string/pref_advertise" />
     <CheckBoxPreference
         android:defaultValue="true"
-        android:key="pref_scan"
-        android:summary="Scan"
-        android:title="Scan" />
+        android:key="@string/pref_scan"
+        android:summary="@string/pref_scan"
+        android:title="@string/pref_scan" />
 
 </PreferenceScreen>

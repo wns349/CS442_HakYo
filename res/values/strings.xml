@@ -3,5 +3,7 @@
 
     <string name="app_name">Hak-yo</string>
     <string name="hello_world">Hello world!</string>
+    <string name="pref_scan">Scan</string>
+    <string name="pref_advertise">Advertise</string>
 
 </resources>

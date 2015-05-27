@@ -1,28 +1,30 @@
 package cj.js.hak_yo.setting;
 
+import cj.js.hak_yo.R;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
 public class SettingHelper {
 
-	private final SharedPreferences sp;
+	private SharedPreferences sp;
 
-	protected enum Keys {
-		MyUUID,
-
-	}
+	private final Context context;
 
 	public SettingHelper(Context context) {
-		sp = PreferenceManager.getDefaultSharedPreferences(context);
+		this.context = context;
+		this.sp = PreferenceManager.getDefaultSharedPreferences(context);
 	}
 
-	public void saveMyUUID(String myUUID) {
-		sp.edit().putString(Keys.MyUUID.name(), myUUID).commit();
+	public boolean isScanEnabled() {
+		return sp.getBoolean(context.getString(R.string.pref_scan), true);
 	}
 
-	public String getMyUUID() {
-		return sp.getString(Keys.MyUUID.name(), null);
+	public boolean isAdvertiseEnabled() {
+		return sp.getBoolean(context.getString(R.string.pref_scan), true);
 	}
 
+	public void load(SharedPreferences sp) {
+		this.sp = sp;
+	}
 }

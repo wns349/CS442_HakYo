@@ -7,6 +7,7 @@ public final class Const {
 
 	public static final int REQUEST_ENABLE_BT = 1842;
 	public static final int NOTIFICATION_ID = 1353;
+	public static final int NOTIFICATION_TTL = 5;
 
 	public static final String FOUND_BEACONS_BROADCAST_INTENT = "cj.js.hak_yo.FOUND_BEACONS";
 	public static final String FOUND_BEACONS_KEY = "found.beacons";
