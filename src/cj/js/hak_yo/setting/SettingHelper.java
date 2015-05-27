@@ -21,7 +21,7 @@ public class SettingHelper {
 	}
 
 	public boolean isAdvertiseEnabled() {
-		return sp.getBoolean(context.getString(R.string.pref_scan), true);
+		return sp.getBoolean(context.getString(R.string.pref_advertise), true);
 	}
 
 	public void load(SharedPreferences sp) {

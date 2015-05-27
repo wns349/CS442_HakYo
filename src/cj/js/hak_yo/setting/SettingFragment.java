@@ -6,11 +6,13 @@ import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import cj.js.hak_yo.R;
 import cj.js.hak_yo.ble.BLEService;
 
 public class SettingFragment extends PreferenceFragment implements
 		OnSharedPreferenceChangeListener {
+	private static final String TAG = "CJS_Setting";
 
 	private SettingHelper settingHelper;
 
@@ -51,12 +53,17 @@ public class SettingFragment extends PreferenceFragment implements
 		settingHelper.load(sp);
 
 		if (key.equalsIgnoreCase(getString(R.string.pref_scan))) {
+			Log.d(TAG,
+					"Key: " + key + " / " + "Value: "
+							+ settingHelper.isScanEnabled());
 			BLEService.getInstance().scanBluetoothDevices(
 					settingHelper.isScanEnabled());
 		} else if (key.equalsIgnoreCase(getString(R.string.pref_advertise))) {
-			BLEService.getInstance().advertiseBluetoothDevice(
-					settingHelper.isAdvertiseEnabled());
+			Log.d(TAG,
+					"Key: " + key + " / " + "Value: "
+							+ settingHelper.isAdvertiseEnabled());
+			 BLEService.getInstance().advertiseBluetoothDevice(
+			 settingHelper.isAdvertiseEnabled());
 		}
 	}
-
 }
