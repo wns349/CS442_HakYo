@@ -3,9 +3,19 @@
 
     <string name="app_name">Hak-yo</string>
     <string name="hello_world">Hello world!</string>
+
+    <!-- Misc -->
+    <string name="from">From</string>
+    <string name="to">To</string>
+    
+    <!-- Preference -->
     <string name="pref_scan">Scan</string>
     <string name="pref_advertise">Advertise</string>
+    <string name="pref_do_not_disturb">DoNotDisturb</string>
+    <string name="pref_do_not_disturb_title">Do Not Disturb</string>
 
+    <!-- Splash -->
     <string name="splash_logo_description">Splash</string>
     <string name="splash_title">Hak-Yo</string>
+
 </resources>
