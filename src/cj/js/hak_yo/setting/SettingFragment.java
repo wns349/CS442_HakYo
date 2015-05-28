@@ -46,6 +46,10 @@ public class SettingFragment extends PreferenceFragment implements
 		// Advertise
 		CheckBoxPreference prefAdvertise = (CheckBoxPreference) findPreference(getString(R.string.pref_advertise));
 		prefAdvertise.setChecked(settingHelper.isAdvertiseEnabled());
+
+		// Do not disturb
+		DoNotDisturbPreference prefDoNotDisturb = (DoNotDisturbPreference) findPreference(getString(R.string.pref_do_not_disturb));
+		prefDoNotDisturb.updatePreferences();
 	}
 
 	@Override
@@ -62,8 +66,8 @@ public class SettingFragment extends PreferenceFragment implements
 			Log.d(TAG,
 					"Key: " + key + " / " + "Value: "
 							+ settingHelper.isAdvertiseEnabled());
-			 BLEService.getInstance().advertiseBluetoothDevice(
-			 settingHelper.isAdvertiseEnabled());
+			BLEService.getInstance().advertiseBluetoothDevice(
+					settingHelper.isAdvertiseEnabled());
 		}
 	}
 }

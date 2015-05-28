@@ -14,7 +14,7 @@
 
     <cj.js.hak_yo.setting.DoNotDisturbPreference
         android:key="@string/pref_do_not_disturb"
-        android:summary="@string/pref_do_not_disturb"
-        android:title="@string/pref_do_not_disturb" />
+        android:summary="@string/pref_do_not_disturb_title"
+        android:title="@string/pref_do_not_disturb_title" />
 
 </PreferenceScreen>

@@ -20,6 +20,7 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import cj.js.hak_yo.Const;
 import cj.js.hak_yo.SplashActivity;
+import cj.js.hak_yo.setting.SettingHelper;
 
 public class NotificationHelper {
 	private static final String TAG = "CJS_Noti";
@@ -130,4 +131,5 @@ public class NotificationHelper {
 
 		notiManager.notify(Const.NOTIFICATION_ID, notification);
 	}
+
 }
