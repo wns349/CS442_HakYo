@@ -2,16 +2,22 @@ package cj.js.hak_yo.db;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
+
+import org.altbeacon.beacon.Beacon;
 
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 import cj.js.hak_yo.Const;
+import cj.js.hak_yo.ble.FoundBeacon;
 
 public class DBHelper extends SQLiteOpenHelper {
+	private static final String TAG = "CJS_DBHelper";
 
 	public DBHelper(Context context) {
 		super(context, Const.DatabaseConst.DATABASE_NAME, null,
@@ -52,8 +58,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
 		ContentValues values = new ContentValues();
 		values.put(Const.DatabaseConst.COLUMN_NAME_ALIAS, friendInfo.getAlias());
-		values.put(Const.DatabaseConst.COLUMN_NAME_UUID,
-				friendInfo.getUUID());
+		values.put(Const.DatabaseConst.COLUMN_NAME_UUID, friendInfo.getUUID());
 		values.put(Const.DatabaseConst.COLUMN_NAME_RSSI, friendInfo.getRssi());
 
 		long newRowId = db.insertWithOnConflict(Const.DatabaseConst.TABLE_NAME,
@@ -91,4 +96,31 @@ public class DBHelper extends SQLiteOpenHelper {
 		}
 	}
 
+	public Collection<FoundBeacon> filterFriends(Collection<Beacon> beacons) {
+		List<FoundBeacon> friendsFound = new ArrayList<FoundBeacon>();
+		Collection<FriendInfo> friendInfos = this.selectFriendInfos();
+		Iterator<Beacon> beaconIterator = beacons.iterator();
+		while (beaconIterator.hasNext()) {
+			Beacon beacon = beaconIterator.next();
+			Log.d(TAG, "Beacon Found: " + beacon.getBluetoothAddress() + " / "
+					+ beacon.getBluetoothName() + " / "
+					+ beacon.getId1().toUuidString());
+			for (FriendInfo friendInfo : friendInfos) {
+				if (isFriend(beacon, friendInfo)) {
+					friendsFound.add(new FoundBeacon(friendInfo, beacon));
+					Log.d(TAG,
+							"Friend Beacon Found: "
+									+ beacon.getBluetoothAddress() + " / "
+									+ beacon.getBluetoothName());
+				}
+			}
+		}
+
+		return friendsFound;
+	}
+
+	private boolean isFriend(Beacon beacon, FriendInfo friendInfo) {
+		return friendInfo.getUUID().equalsIgnoreCase(
+				beacon.getId1().toUuidString());
+	}
 }

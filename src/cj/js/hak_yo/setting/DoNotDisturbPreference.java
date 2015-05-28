@@ -1,5 +1,7 @@
 package cj.js.hak_yo.setting;
 
+import java.util.Locale;
+
 import android.content.Context;
 import android.preference.DialogPreference;
 import android.util.AttributeSet;
@@ -78,10 +80,10 @@ public class DoNotDisturbPreference extends DialogPreference {
 
 		// Update summary
 		if (settingHelper.useDoNotDisturb()) {
-			String from = String.format("%02d:%02d",
+			String from = String.format(Locale.getDefault(), "%02d:%02d",
 					settingHelper.getFromTimeHour(),
 					settingHelper.getFromTimeMinute());
-			String to = String.format("%02d:%02d",
+			String to = String.format(Locale.getDefault(), "%02d:%02d",
 					settingHelper.getToTimeHour(),
 					settingHelper.getToTimeMinute());
 

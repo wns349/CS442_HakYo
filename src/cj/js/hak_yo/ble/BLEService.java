@@ -1,9 +1,6 @@
 package cj.js.hak_yo.ble;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
 
 import org.altbeacon.beacon.Beacon;
 import org.altbeacon.beacon.BeaconConsumer;
@@ -24,7 +21,6 @@ import android.util.Log;
 import cj.js.hak_yo.Const;
 import cj.js.hak_yo.HakYoBroadcastReceiver;
 import cj.js.hak_yo.db.DBHelper;
-import cj.js.hak_yo.db.FriendInfo;
 import cj.js.hak_yo.setting.SettingHelper;
 import cj.js.hak_yo.util.BLEUtil;
 import cj.js.hak_yo.util.UUIDUtil;
@@ -200,13 +196,16 @@ public class BLEService extends Service implements BeaconConsumer, Runnable {
 			@Override
 			public void didRangeBeaconsInRegion(Collection<Beacon> beacons,
 					Region region) {
-				Collection<FoundBeacon> foundBeacons = filterFriends(beacons);
 				if (mBLECallback != null) {
 					// Activity is running
-					mBLECallback.onBeaconsFoundInRegion(foundBeacons, region);
+					mBLECallback.onBeaconsFoundInRegion(beacons, region);
 				} else {
 					// Activity is not running
-					notiHelper.sendNotification(foundBeacons, region);
+					if (settingHelper.canSendNotification()) {
+						Collection<FoundBeacon> friends = dbHelper
+								.filterFriends(beacons);
+						notiHelper.sendNotification(friends, region);
+					}
 				}
 			}
 		});
@@ -218,34 +217,6 @@ public class BLEService extends Service implements BeaconConsumer, Runnable {
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
-	}
-
-	private Collection<FoundBeacon> filterFriends(Collection<Beacon> beacons) {
-		List<FoundBeacon> friendsFound = new ArrayList<FoundBeacon>();
-		Collection<FriendInfo> friendInfos = dbHelper.selectFriendInfos();
-		Iterator<Beacon> beaconIterator = beacons.iterator();
-		while (beaconIterator.hasNext()) {
-			Beacon beacon = beaconIterator.next();
-			Log.d(TAG, "Beacon Found: " + beacon.getBluetoothAddress() + " / "
-					+ beacon.getBluetoothName() + " / "
-					+ beacon.getId1().toUuidString());
-			for (FriendInfo friendInfo : friendInfos) {
-				if (isFriend(beacon, friendInfo)) {
-					friendsFound.add(new FoundBeacon(friendInfo, beacon));
-					Log.d(TAG,
-							"Friend Beacon Found: "
-									+ beacon.getBluetoothAddress() + " / "
-									+ beacon.getBluetoothName());
-				}
-			}
-		}
-
-		return friendsFound;
-	}
-
-	private boolean isFriend(Beacon beacon, FriendInfo friendInfo) {
-		return friendInfo.getUUID().equalsIgnoreCase(
-				beacon.getId1().toUuidString());
 	}
 
 	@Override

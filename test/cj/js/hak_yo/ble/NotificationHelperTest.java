@@ -3,10 +3,30 @@ package cj.js.hak_yo.ble;
 import java.util.ArrayList;
 import java.util.List;
 
+import junit.framework.Assert;
 import android.test.InstrumentationTestCase;
 import cj.js.hak_yo.db.FriendInfo;
+import cj.js.hak_yo.setting.SettingHelper;
 
 public class NotificationHelperTest extends InstrumentationTestCase {
+
+	public void testDoNotDisturb() {
+		SettingHelper settingHelper = new SettingHelper(getInstrumentation()
+				.getContext());
+
+		Assert.assertFalse(settingHelper.canSendNotification(9, 0, 18, 0, 16,
+				35));
+
+		Assert.assertFalse(settingHelper.canSendNotification(18, 0, 9, 0, 22,
+				35));
+
+		Assert.assertTrue(settingHelper
+				.canSendNotification(9, 0, 18, 0, 21, 33));
+
+		Assert.assertTrue(settingHelper
+				.canSendNotification(18, 0, 9, 0, 16, 33));
+	}
+
 	public void testNotificationHelper() throws InterruptedException {
 		NotificationHelper notiHelper = new NotificationHelper(
 				getInstrumentation().getContext());

@@ -20,7 +20,6 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import cj.js.hak_yo.Const;
 import cj.js.hak_yo.SplashActivity;
-import cj.js.hak_yo.setting.SettingHelper;
 
 public class NotificationHelper {
 	private static final String TAG = "CJS_Noti";
@@ -43,10 +42,9 @@ public class NotificationHelper {
 		this.notifiedBeacons.clear();
 	}
 
-	public void sendNotification(Collection<FoundBeacon> foundBeacons,
-			Region region) {
+	public void sendNotification(Collection<FoundBeacon> friends, Region region) {
 
-		List<FoundBeacon> newBeacons = new ArrayList<FoundBeacon>(foundBeacons);
+		List<FoundBeacon> newBeacons = new ArrayList<FoundBeacon>(friends);
 		Collections.sort(newBeacons);
 
 		List<FoundBeacon> oldBeacons = new ArrayList<FoundBeacon>(

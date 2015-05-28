@@ -3,6 +3,7 @@ package cj.js.hak_yo;
 import java.util.Collection;
 import java.util.Iterator;
 
+import org.altbeacon.beacon.Beacon;
 import org.altbeacon.beacon.Region;
 
 import android.app.Activity;
@@ -24,6 +25,7 @@ import android.widget.Toast;
 import cj.js.hak_yo.ble.BLECallback;
 import cj.js.hak_yo.ble.BLEService;
 import cj.js.hak_yo.ble.FoundBeacon;
+import cj.js.hak_yo.db.DBHelper;
 import cj.js.hak_yo.friend.AddFriendActivity;
 import cj.js.hak_yo.setting.SettingActivity;
 import cj.js.hak_yo.util.BLEUtil;
@@ -36,11 +38,15 @@ public class MainActivity extends Activity implements BLECallback {
 
 	private BLEService bleService = null;
 
+	private DBHelper dbHelper = null;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		initializeViews();
+
+		dbHelper = new DBHelper(this);
 	}
 
 	@Override
@@ -186,15 +192,17 @@ public class MainActivity extends Activity implements BLECallback {
 	}
 
 	@Override
-	public void onBeaconsFoundInRegion(
-			final Collection<FoundBeacon> foundBeacons, final Region region) {
+	public void onBeaconsFoundInRegion(final Collection<Beacon> foundBeacons,
+			final Region region) {
 		runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
 				deviceListAdapter.clear();
 
-				if (foundBeacons.size() > 0) {
-					Iterator<FoundBeacon> itr = foundBeacons.iterator();
+				Collection<FoundBeacon> friends = dbHelper
+						.filterFriends(foundBeacons);
+				if (friends.size() > 0) {
+					Iterator<FoundBeacon> itr = friends.iterator();
 					while (itr.hasNext()) {
 						FoundBeacon foundBeacon = itr.next();
 						deviceListAdapter.addBeacon(foundBeacon);
