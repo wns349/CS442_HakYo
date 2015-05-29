@@ -23,6 +23,15 @@ public class SettingHelper {
 	public void load(SharedPreferences sp) {
 		this.sp = sp;
 	}
+	
+	public boolean isFirstMainRun(){
+		return true;
+		//return sp.getBoolean(context.getString(R.string.pref_first_main_run), true);
+	}
+	
+	public void markFirstRun(){
+		sp.edit().putBoolean(context.getString(R.string.pref_first_main_run), false).commit();
+	}
 
 	public boolean isScanEnabled() {
 		return sp.getBoolean(context.getString(R.string.pref_scan), true);

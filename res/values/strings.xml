@@ -20,6 +20,7 @@
     <string name="pref_do_not_disturb_title">Do Not Disturb</string>
     <string name="pref_use_do_not_disturb_title">Enable Do Not Disturb</string>
     <string name="pref_use_do_not_disturb_disabled">Disabled</string>
+    <string name="pref_first_main_run">FirstMainRun</string>
 
     <!-- Splash -->
     <string name="splash_logo_description">Splash</string>

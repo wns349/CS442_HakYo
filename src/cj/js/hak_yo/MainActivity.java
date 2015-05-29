@@ -9,15 +9,18 @@ import org.altbeacon.beacon.Region;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningServiceInfo;
+import android.app.Dialog;
 import android.bluetooth.BluetoothAdapter;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -28,6 +31,7 @@ import cj.js.hak_yo.ble.FoundBeacon;
 import cj.js.hak_yo.db.DBHelper;
 import cj.js.hak_yo.friend.AddFriendActivity;
 import cj.js.hak_yo.setting.SettingActivity;
+import cj.js.hak_yo.setting.SettingHelper;
 import cj.js.hak_yo.util.BLEUtil;
 import cj.js.hak_yo.util.UUIDUtil;
 
@@ -40,13 +44,41 @@ public class MainActivity extends Activity implements BLECallback {
 
 	private DBHelper dbHelper = null;
 
+	private SettingHelper settingHelper = null;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
-		initializeViews();
 
 		dbHelper = new DBHelper(this);
+		settingHelper = new SettingHelper(this);
+
+		setContentView(R.layout.activity_main);
+
+		if (settingHelper.isFirstMainRun()) {
+			displayHelp();
+		}
+
+		initializeViews();
+	}
+
+	private void displayHelp() {
+		final Dialog dialog = new Dialog(this);
+		dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+		dialog.getWindow().setBackgroundDrawable(
+				new ColorDrawable(android.graphics.Color.TRANSPARENT));
+		dialog.setContentView(R.layout.activity_help_main);
+		dialog.setCanceledOnTouchOutside(true);
+		// for dismissing anywhere you touch
+		View masterView = dialog.findViewById(R.id.coach_mark_master_view);
+		masterView.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				dialog.dismiss();
+			}
+		});
+		dialog.show();
+
 	}
 
 	@Override
