@@ -19,11 +19,13 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -88,12 +90,17 @@ public class MainActivity extends Activity implements BLECallback {
 	private void displayHelp() {
 		final Dialog dialog = new Dialog(this);
 		dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-		dialog.getWindow().setBackgroundDrawable(
-				new ColorDrawable(android.graphics.Color.TRANSPARENT));
+		Window window = dialog.getWindow();
+		WindowManager.LayoutParams wlp = window.getAttributes();
+		wlp.gravity = Gravity.TOP;
+		window.setAttributes(wlp);
+		window.setBackgroundDrawable(new ColorDrawable(
+				android.graphics.Color.TRANSPARENT));
+
 		dialog.setContentView(R.layout.activity_help_main);
 		dialog.setCanceledOnTouchOutside(true);
 		// for dismissing anywhere you touch
-		View masterView = dialog.findViewById(R.id.coach_mark_master_view);
+		View masterView = dialog.findViewById(R.id.help_main_layout);
 		masterView.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
