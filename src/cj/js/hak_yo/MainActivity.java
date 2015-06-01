@@ -19,9 +19,11 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -60,6 +62,27 @@ public class MainActivity extends Activity implements BLECallback {
 		}
 
 		initializeViews();
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		MenuInflater menuInflater = getMenuInflater();
+		menuInflater.inflate(R.menu.main_activity_actions, menu);
+		return super.onCreateOptionsMenu(menu);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.action_add_friend:
+			goToAddFriendActivity();
+			return true;
+		case R.id.action_setting:
+			goToSettingActivity();
+			return true;
+		}
+
+		return super.onOptionsItemSelected(item);
 	}
 
 	private void displayHelp() {
@@ -137,28 +160,19 @@ public class MainActivity extends Activity implements BLECallback {
 		return false;
 	}
 
-	private void initializeViews() {
-		// Add Friend
-		Button btnAddFriend = (Button) findViewById(R.id.btn_add_friend);
-		btnAddFriend.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				Intent intentAddFriend = new Intent(getApplicationContext(),
-						AddFriendActivity.class);
-				startActivity(intentAddFriend);
-			}
-		});
+	private void goToAddFriendActivity() {
+		Intent intentAddFriend = new Intent(getApplicationContext(),
+				AddFriendActivity.class);
+		startActivity(intentAddFriend);
+	}
 
-		// Settings
-		Button btnSettings = (Button) findViewById(R.id.btn_settings);
-		btnSettings.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				Intent intentSetting = new Intent(getApplicationContext(),
-						SettingActivity.class);
-				startActivity(intentSetting);
-			}
-		});
+	private void goToSettingActivity() {
+		Intent intentSetting = new Intent(getApplicationContext(),
+				SettingActivity.class);
+		startActivity(intentSetting);
+	}
+
+	private void initializeViews() {
 
 		// Listview
 		ListView listDevices = (ListView) findViewById(R.id.list_devices);

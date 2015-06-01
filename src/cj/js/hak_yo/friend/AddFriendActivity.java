@@ -33,6 +33,8 @@ public class AddFriendActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_add_friend);
 
+		getActionBar().setDisplayHomeAsUpEnabled(true);
+		
 		initializeViews();
 	}
 

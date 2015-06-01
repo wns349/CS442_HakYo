@@ -8,6 +8,8 @@ public class SettingActivity extends PreferenceActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		getActionBar().setDisplayHomeAsUpEnabled(true);
+		
 		getFragmentManager().beginTransaction()
 				.replace(android.R.id.content, new SettingFragment()).commit();
 	}
