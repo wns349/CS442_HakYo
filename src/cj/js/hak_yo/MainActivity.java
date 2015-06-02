@@ -42,8 +42,6 @@ import cj.js.hak_yo.util.UUIDUtil;
 public class MainActivity extends Activity implements BLECallback {
 	private static final String TAG = "CJS";
 
-	private DeviceListAdapter deviceListAdapter = null;
-
 	private BLEService bleService = null;
 
 	private DBHelper dbHelper = null;
@@ -181,15 +179,15 @@ public class MainActivity extends Activity implements BLECallback {
 
 	private void initializeViews() {
 
-		// Listview
-		ListView listDevices = (ListView) findViewById(R.id.list_devices);
-		deviceListAdapter = new DeviceListAdapter(this);
-		listDevices.setAdapter(deviceListAdapter);
-		deviceListAdapter.notifyDataSetChanged();
-
-		// My UUID
-		TextView txtMyUUID = (TextView) findViewById(R.id.txt_my_UUID);
-		txtMyUUID.setText(UUIDUtil.toUUID(BLEUtil.getMacAddress()).toString());
+//		// Listview
+//		ListView listDevices = (ListView) findViewById(R.id.list_devices);
+//		deviceListAdapter = new DeviceListAdapter(this);
+//		listDevices.setAdapter(deviceListAdapter);
+//		deviceListAdapter.notifyDataSetChanged();
+//
+//		// My UUID
+//		TextView txtMyUUID = (TextView) findViewById(R.id.txt_my_UUID);
+//		txtMyUUID.setText(UUIDUtil.toUUID(BLEUtil.getMacAddress()).toString());
 	}
 
 	private ServiceConnection bleServiceConnection = new ServiceConnection() {
@@ -250,19 +248,19 @@ public class MainActivity extends Activity implements BLECallback {
 		runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
-				deviceListAdapter.clear();
-
-				Collection<FoundBeacon> friends = dbHelper
-						.filterFriends(foundBeacons);
-				if (friends.size() > 0) {
-					Iterator<FoundBeacon> itr = friends.iterator();
-					while (itr.hasNext()) {
-						FoundBeacon foundBeacon = itr.next();
-						deviceListAdapter.addBeacon(foundBeacon);
-					}
-				}
-
-				deviceListAdapter.notifyDataSetChanged();
+//				deviceListAdapter.clear();
+//
+//				Collection<FoundBeacon> friends = dbHelper
+//						.filterFriends(foundBeacons);
+//				if (friends.size() > 0) {
+//					Iterator<FoundBeacon> itr = friends.iterator();
+//					while (itr.hasNext()) {
+//						FoundBeacon foundBeacon = itr.next();
+//						deviceListAdapter.addBeacon(foundBeacon);
+//					}
+//				}
+//
+//				deviceListAdapter.notifyDataSetChanged();
 			}
 		});
 	}
