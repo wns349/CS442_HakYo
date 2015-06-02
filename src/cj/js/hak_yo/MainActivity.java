@@ -1,7 +1,11 @@
 package cj.js.hak_yo;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import org.altbeacon.beacon.Beacon;
 import org.altbeacon.beacon.Region;
@@ -26,8 +30,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 import cj.js.hak_yo.ble.BLECallback;
 import cj.js.hak_yo.ble.BLEService;
@@ -36,8 +38,6 @@ import cj.js.hak_yo.db.DBHelper;
 import cj.js.hak_yo.friend.AddFriendActivity;
 import cj.js.hak_yo.setting.SettingActivity;
 import cj.js.hak_yo.setting.SettingHelper;
-import cj.js.hak_yo.util.BLEUtil;
-import cj.js.hak_yo.util.UUIDUtil;
 
 public class MainActivity extends Activity implements BLECallback {
 	private static final String TAG = "CJS";
@@ -47,6 +47,21 @@ public class MainActivity extends Activity implements BLECallback {
 	private DBHelper dbHelper = null;
 
 	private SettingHelper settingHelper = null;
+
+	private CharacterView[] characters = null;
+
+	private final int[] imgCharacters = { R.id.img_character_loc_01,
+			R.id.img_character_loc_02, R.id.img_character_loc_03,
+			R.id.img_character_loc_04, R.id.img_character_loc_05 };
+	private final int[] layoutCharacters = { R.id.layout_character_balloon_01,
+			R.id.layout_character_balloon_02, R.id.layout_character_balloon_03,
+			R.id.layout_character_balloon_04, R.id.layout_character_balloon_05 };
+	private final int[] txtCharacters = { R.id.txt_character_01,
+			R.id.txt_character_02, R.id.txt_character_03,
+			R.id.txt_character_04, R.id.txt_character_05 };
+
+	// key: index, value: friendList
+	private Map<Integer, List<FoundBeacon>> friendsAtLocations = new HashMap<Integer, List<FoundBeacon>>();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -178,16 +193,33 @@ public class MainActivity extends Activity implements BLECallback {
 	}
 
 	private void initializeViews() {
+		characters = new CharacterView[imgCharacters.length];
+		for (int i = 0; i < imgCharacters.length; i++) {
 
-//		// Listview
-//		ListView listDevices = (ListView) findViewById(R.id.list_devices);
-//		deviceListAdapter = new DeviceListAdapter(this);
-//		listDevices.setAdapter(deviceListAdapter);
-//		deviceListAdapter.notifyDataSetChanged();
-//
-//		// My UUID
-//		TextView txtMyUUID = (TextView) findViewById(R.id.txt_my_UUID);
-//		txtMyUUID.setText(UUIDUtil.toUUID(BLEUtil.getMacAddress()).toString());
+			characters[i] = new CharacterView(getApplicationContext(),
+					getWindow().getDecorView().findViewById(
+							android.R.id.content), imgCharacters[i],
+					layoutCharacters[i], txtCharacters[i]);
+			hideCharacter(i);
+		}
+	}
+
+	private void showCharacter(int index, List<FoundBeacon> friendList) {
+		CharacterView character = null;
+		if ((character = characters[index]) == null) {
+			return;
+		}
+
+		character.showView(friendList);
+	}
+
+	private void hideCharacter(int index) {
+		CharacterView character = null;
+		if ((character = characters[index]) == null) {
+			return;
+		}
+
+		character.hideView();
 	}
 
 	private ServiceConnection bleServiceConnection = new ServiceConnection() {
@@ -242,26 +274,54 @@ public class MainActivity extends Activity implements BLECallback {
 		startActivityForResult(enableBtIntent, Const.REQUEST_ENABLE_BT);
 	}
 
+	private int getCharacterIndex(FoundBeacon foundBeacon) {
+		// TODO
+		return 0;
+	}
+
 	@Override
 	public void onBeaconsFoundInRegion(final Collection<Beacon> foundBeacons,
 			final Region region) {
 		runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
-//				deviceListAdapter.clear();
-//
-//				Collection<FoundBeacon> friends = dbHelper
-//						.filterFriends(foundBeacons);
-//				if (friends.size() > 0) {
-//					Iterator<FoundBeacon> itr = friends.iterator();
-//					while (itr.hasNext()) {
-//						FoundBeacon foundBeacon = itr.next();
-//						deviceListAdapter.addBeacon(foundBeacon);
-//					}
-//				}
-//
-//				deviceListAdapter.notifyDataSetChanged();
+				Collection<FoundBeacon> friends = dbHelper
+						.filterFriends(foundBeacons);
+				// Clear
+				for (List<FoundBeacon> friendsAtLocation : friendsAtLocations
+						.values()) {
+					friendsAtLocation.clear();
+				}
+
+				// Identify which location
+				if (friends.size() > 0) {
+					Iterator<FoundBeacon> itr = friends.iterator();
+					while (itr.hasNext()) {
+						FoundBeacon foundBeacon = itr.next();
+						int index = getCharacterIndex(foundBeacon);
+						List<FoundBeacon> friendList = friendsAtLocations
+								.get(index);
+						if (friendList == null) {
+							friendList = new ArrayList<FoundBeacon>();
+							friendsAtLocations.put(index, friendList);
+						}
+						friendList.add(foundBeacon);
+					}
+				}
+
+				for (int index = 0; index < characters.length; index++) {
+					List<FoundBeacon> friendList = friendsAtLocations
+							.get(index);
+					if (friendList == null || friendList.isEmpty()) {
+						// Hide
+						hideCharacter(index);
+					} else {
+						// Show
+						showCharacter(index, friendList);
+					}
+				}
 			}
 		});
 	}
+
 }

@@ -2,6 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
+    android:animateLayoutChanges="true"
     tools:context="${relativePackage}.${activityClass}" >
 
     <ImageView
@@ -18,12 +19,13 @@
         android:layout_height="25dp"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true" />
+
     <Space
         android:id="@+id/space_center_below"
         android:layout_width="25dp"
         android:layout_height="25dp"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@id/space_center" />
+        android:layout_below="@id/space_center"
+        android:layout_centerHorizontal="true" />
 
     <Space
         android:id="@+id/space_center_sun"
@@ -48,6 +50,28 @@
         android:contentDescription="@string/hello_world"
         android:src="@drawable/c0" />
 
+    <RelativeLayout
+        android:id="@+id/layout_character_balloon_01"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/img_character_loc_01"
+        android:layout_toStartOf="@id/img_character_loc_01" >
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:contentDescription="@string/hello_world"
+            android:src="@drawable/balloon" />
+
+        <TextView
+            android:id="@+id/txt_character_01"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="@string/zero" />
+    </RelativeLayout>
+
     <ImageView
         android:id="@+id/img_character_loc_02"
         android:layout_width="50dp"
@@ -57,6 +81,28 @@
         android:contentDescription="@string/hello_world"
         android:src="@drawable/c1" />
 
+    <RelativeLayout
+        android:id="@+id/layout_character_balloon_02"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/img_character_loc_02"
+        android:layout_toStartOf="@id/img_character_loc_02" >
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:contentDescription="@string/hello_world"
+            android:src="@drawable/balloon" />
+
+        <TextView
+            android:id="@+id/txt_character_02"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="@string/zero" />
+    </RelativeLayout>
+
     <ImageView
         android:id="@+id/img_character_loc_03"
         android:layout_width="75dp"
@@ -65,6 +111,28 @@
         android:layout_toEndOf="@id/space_center"
         android:contentDescription="@string/hello_world"
         android:src="@drawable/c2" />
+
+    <RelativeLayout
+        android:id="@+id/layout_character_balloon_03"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/img_character_loc_03"
+        android:layout_toStartOf="@id/img_character_loc_03" >
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:contentDescription="@string/hello_world"
+            android:src="@drawable/balloon" />
+
+        <TextView
+            android:id="@+id/txt_character_03"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="@string/zero" />
+    </RelativeLayout>
 
     <ImageView
         android:id="@+id/img_character_loc_04"
@@ -76,6 +144,7 @@
         android:src="@drawable/c3" />
 
     <RelativeLayout
+        android:id="@+id/layout_RB_corner"
         android:layout_width="140dp"
         android:layout_height="220dp"
         android:layout_alignBottom="@id/space_RB_corner"
@@ -89,6 +158,49 @@
             android:scaleType="matrix"
             android:src="@drawable/c4" />
     </RelativeLayout>
-    <!--  -->
+
+    <RelativeLayout
+        android:id="@+id/layout_character_balloon_05"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/layout_RB_corner"
+        android:layout_alignEnd="@id/layout_RB_corner" >
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:contentDescription="@string/hello_world"
+            android:src="@drawable/balloon" />
+
+        <TextView
+            android:id="@+id/txt_character_05"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="@string/zero" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/layout_character_balloon_04"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/img_character_loc_03"
+        android:layout_toStartOf="@id/img_character_loc_04" >
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:contentDescription="@string/hello_world"
+            android:src="@drawable/balloon" />
+
+        <TextView
+            android:id="@+id/txt_character_04"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="@string/zero" />
+    </RelativeLayout>
 
 </RelativeLayout>
