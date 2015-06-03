@@ -96,6 +96,8 @@ public class DoNotDisturbPreference extends DialogPreference {
 		// Update checkbox
 		if (cbUseDoNotDisturb != null) {
 			cbUseDoNotDisturb.setChecked(settingHelper.useDoNotDisturb());
+			tpFrom.setEnabled(settingHelper.useDoNotDisturb());
+			tpTo.setEnabled(settingHelper.useDoNotDisturb());
 		}
 
 		// Update time

@@ -19,6 +19,7 @@ import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import cj.js.hak_yo.Const;
+import cj.js.hak_yo.R;
 import cj.js.hak_yo.SplashActivity;
 
 public class NotificationHelper {
@@ -114,7 +115,7 @@ public class NotificationHelper {
 
 		NotificationCompat.Builder builder = new NotificationCompat.Builder(
 				context)
-				.setSmallIcon(android.R.drawable.ic_btn_speak_now)
+				.setSmallIcon(R.drawable.shield)
 				.setContentTitle("Say YO~!")
 				.setContentText(
 						foundBeacon.getFriendInfo().getAlias() + " is nearby!");
