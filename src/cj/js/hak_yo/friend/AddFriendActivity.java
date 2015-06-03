@@ -2,7 +2,7 @@ package cj.js.hak_yo.friend;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
+import java.util.List;
 
 import org.altbeacon.beacon.Beacon;
 import org.altbeacon.beacon.Region;
@@ -11,34 +11,22 @@ import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningServiceInfo;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.bluetooth.BluetoothAdapter;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import cj.js.hak_yo.Const;
-import cj.js.hak_yo.DeviceListAdapter;
-import cj.js.hak_yo.MainActivity;
 import cj.js.hak_yo.R;
 import cj.js.hak_yo.ble.BLECallback;
 import cj.js.hak_yo.ble.BLEService;
-import cj.js.hak_yo.ble.FoundBeacon;
 import cj.js.hak_yo.db.DBHelper;
 import cj.js.hak_yo.db.FriendInfo;
 import cj.js.hak_yo.util.BLEUtil;
@@ -48,11 +36,10 @@ public class AddFriendActivity extends Activity implements BLECallback {
 	private static final String TAG = "CJS";
 
 	private DBHelper dbHelper = null;
-	private ArrayAdapter<String> listFriendAdapter = null;
-	private DeviceBeaconListAdapter deviceListAdapter = null;
-
-	
 	private BLEService bleService = null;
+
+	private NearestBeacon nearestBeacon = new NearestBeacon();
+	private boolean isDialogShown = false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -60,10 +47,17 @@ public class AddFriendActivity extends Activity implements BLECallback {
 		setContentView(R.layout.activity_add_friend);
 
 		getActionBar().setDisplayHomeAsUpEnabled(true);
-		
-		initializeViews();
+
+		this.dbHelper = new DBHelper(this);
+
+		initializeView();
 	}
-	
+
+	private void initializeView() {
+		TextView txtMyInfo = (TextView) findViewById(R.id.txt_addfriend_my_info);
+		txtMyInfo.setText("My ID: " + UUIDUtil.toUUID(BLEUtil.getMacAddress()));
+	}
+
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
@@ -85,7 +79,7 @@ public class AddFriendActivity extends Activity implements BLECallback {
 			unbindService(bleServiceConnection);
 		}
 	}
-	
+
 	private void startBLEService() {
 		Intent hakYoService = new Intent(getApplicationContext(),
 				BLEService.class);
@@ -96,7 +90,7 @@ public class AddFriendActivity extends Activity implements BLECallback {
 		bindService(hakYoService, bleServiceConnection,
 				Context.BIND_AUTO_CREATE);
 	}
-	
+
 	private void stopBLEService() {
 		Intent hakYoService = new Intent(getApplicationContext(),
 				BLEService.class);
@@ -125,7 +119,7 @@ public class AddFriendActivity extends Activity implements BLECallback {
 			bleService.startBLE();
 		}
 	};
-	
+
 	@Override
 	public void onBluetoothNotSupported() {
 		Toast.makeText(this, "Bluetooth not found.", Toast.LENGTH_LONG).show();
@@ -142,26 +136,40 @@ public class AddFriendActivity extends Activity implements BLECallback {
 	}
 
 	@Override
-	public void onBeaconsFoundInRegion(
-			final Collection<Beacon> beacons, final Region region) {
+	public void onBeaconsFoundInRegion(final Collection<Beacon> beacons,
+			final Region region) {
+		// Run on UI
 		runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
-				//deviceListAdapter.clear();
-
-				if (beacons.size() > 0) {
-					Iterator<Beacon> itr = beacons.iterator();
-					while (itr.hasNext()) {
-						Beacon beacon = itr.next();
-						deviceListAdapter.addBeacon(beacon);
+				// Find beacon with highest RSSI value
+				Beacon nBeacon = null;
+				if (beacons != null && !beacons.isEmpty()) {
+					int t = Integer.MIN_VALUE;
+					for (Beacon b : beacons) {
+						if (b.getRssi() >= t) {
+							nBeacon = b;
+							t = nBeacon.getRssi();
+						}
 					}
 				}
 
-				deviceListAdapter.notifyDataSetChanged();
+				if (isCandidateForNewFriend(nBeacon)) {
+					showAddFriendDialog(nBeacon, nearestBeacon.getAverageRSSI());
+				}
 			}
 		});
 	}
-	
+
+	private boolean isCandidateForNewFriend(Beacon nBeacon) {
+		if (nBeacon == null) {
+			return false;
+		}
+
+		nearestBeacon.mark(nBeacon.getId1().toUuidString(), nBeacon.getRssi());
+		return (nearestBeacon.getCount() >= Const.ADD_FRIEND_BEACON_SCAN_THRESHOLD);
+	}
+
 	private boolean isServiceRunning(Class<?> serviceClass) {
 		ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
 		for (RunningServiceInfo service : manager
@@ -180,123 +188,101 @@ public class AddFriendActivity extends Activity implements BLECallback {
 
 		FriendInfo friendInfo = new FriendInfo(friendName, macAddress, rssi);
 		dbHelper.insertFriendInfo(friendInfo);
-		
-		refreshList();
 	}
 
-	private Collection<FriendInfo> getFriends() {
-		if (dbHelper == null) {
-			dbHelper = new DBHelper(this);
+	private void showAddFriendDialog(final Beacon nBeacon, final double avgRssi) {
+		// Do not show multiple dialogs
+		if (isDialogShown) {
+			return;
+		}
+		isDialogShown = true;
+
+		AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+		String existingFriendAlias = null;
+		if ((existingFriendAlias = dbHelper.getFriendAlias(nBeacon)) != null) {
+			// already friend
+			dialogBuilder.setTitle("Existing Friend");
+			dialogBuilder.setMessage("You are already friends with "
+					+ existingFriendAlias + " !" + "\n"
+					+ "Not a friend? Try searching again!");
+			dialogBuilder.setPositiveButton("OK",
+					new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							dialog.cancel();
+							finish();
+						}
+					});
+			dialogBuilder.show();
+		} else {
+			// already friend
+			dialogBuilder.setTitle("New Friend!");
+			dialogBuilder.setMessage("New Friend ID: "
+					+ nBeacon.getId1().toUuidString());
+			final EditText input = new EditText(this);
+			input.setHint("Enter Friend's Name");
+			dialogBuilder.setView(input);
+
+			dialogBuilder.setPositiveButton("OK",
+					new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							String alias = input.getText().toString();
+							if (alias == null || alias.isEmpty()) {
+								alias = "Unknown";
+							}
+
+							addFriend(alias, nBeacon.getId1().toUuidString(),
+									(int) avgRssi);
+							Toast.makeText(getApplicationContext(),
+									alias + " added!", Toast.LENGTH_LONG)
+									.show();
+							dialog.cancel();
+							finish();
+						}
+					});
+
+			dialogBuilder.setNegativeButton("Cancel",
+					new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							dialog.cancel();
+							finish();
+						}
+					});
+
+			dialogBuilder.show();
 		}
 
-		return dbHelper.selectFriendInfos();
 	}
-	
-	private void refreshList() {
-		listFriendAdapter.clear();
 
-		Collection<FriendInfo> friends = getFriends();
-		Iterator<FriendInfo> itr = friends.iterator();
-		while (itr.hasNext()) {
-			FriendInfo friendInfo = itr.next();
-			listFriendAdapter.add(friendInfo.toString());
+	class NearestBeacon {
+		private String uuid;
+		private List<Integer> rssiVals = new ArrayList<Integer>();
+
+		public int getCount() {
+			return rssiVals.size();
 		}
 
-		listFriendAdapter.notifyDataSetChanged();
-	}
-
-	private void initializeViews() {		
-		// Add button
-		Button btnAddDevice = (Button) findViewById(R.id.btn_add_device);
-		btnAddDevice.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				EditText edtMacAddr = (EditText) findViewById(R.id.edt_mac_address);
-				String uuid = UUIDUtil.toUUID(edtMacAddr.getText().toString().trim()).toString();
-				
-				Beacon beacon = new Beacon.Builder().setId1(uuid)
-						.setId2(Const.BeaconConst.UUID_2)
-						.setId3(Const.BeaconConst.UUID_3)
-						.setManufacturer(Const.BeaconConst.MANUFACTURER)
-						.setTxPower(Const.BeaconConst.TX_POWER)
-						.setBluetoothAddress(uuid)
-						.setBluetoothName(uuid)
-						.setDataFields(Const.BeaconConst.DATA_FIELDS).build();
-				
-				deviceListAdapter.addBeacon(beacon);
-				deviceListAdapter.notifyDataSetChanged();
+		public void mark(String uuid, int rssi) {
+			if (this.uuid != null && this.uuid.equalsIgnoreCase(uuid)) {
+				// Existing
+				rssiVals.add(rssi);
+			} else {
+				// New
+				this.uuid = uuid;
+				rssiVals.clear();
+				rssiVals.add(rssi);
 			}
-		});
+		}
 
-		Button btnRefresh = (Button) findViewById(R.id.btn_refresh_friends_list);
-		btnRefresh.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				refreshList();
+		public double getAverageRSSI() {
+			double t = 0.0;
+			for (int i : rssiVals) {
+				t += i;
 			}
-		});
-		
-		// List View - Devices
-		ListView listDevices = (ListView) findViewById(R.id.list_devices);
-		deviceListAdapter = new DeviceBeaconListAdapter(this);
-		listDevices.setAdapter(deviceListAdapter);
-		deviceListAdapter.notifyDataSetChanged();
-		listDevices.setOnItemClickListener(new OnItemClickListener() {
-			public void onItemClick(AdapterView arg0, View view, int position, long id) {
-				Beacon beacon = deviceListAdapter.getItem(position);
-				Log.d(TAG, "selected ble addr: " + beacon.getBluetoothAddress());
-				showAddFriendDialog(position);
-			}
-		});
 
-		// Textview
-		TextView txtMyMacAddr = (TextView) findViewById(R.id.txt_my_mac_addr);
-		txtMyMacAddr.setText(BLEUtil.getMacAddress());
-
-		// List View
-		ListView listFriends = (ListView) findViewById(R.id.list_friends);
-		listFriendAdapter = new ArrayAdapter<String>(getApplicationContext(),
-				android.R.layout.simple_list_item_1, new ArrayList<String>()) {
-			@Override
-			public View getView(int position, View convertView, ViewGroup parent) {
-				View view = super.getView(position, convertView, parent);
-				TextView text = (TextView) view
-						.findViewById(android.R.id.text1);
-				text.setTextColor(Color.BLACK);
-				return view;
-			}
-		};
-		listFriends.setAdapter(listFriendAdapter);
-		refreshList();
-	}
-	
-	private void showAddFriendDialog(int position) {
-		final int pos = position;
-		AlertDialog.Builder alert = new AlertDialog.Builder(this);
-
-		alert.setTitle("Add Friend");
-		alert.setMessage("Do you want to add " + deviceListAdapter.getItem(position).getBluetoothName() + "as your friend?");
-
-		// Set an EditText view to get user input 
-		final EditText input = new EditText(this);
-		input.setHint("Enter friend's nickname");
-		alert.setView(input);
-		
-		alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int whichButton) {
-				String nickname = input.getText().toString();
-				addFriend(nickname, deviceListAdapter.getItem(pos).getBluetoothAddress(), deviceListAdapter.getItem(0).getRssi());
-		  	}
-		});
-
-		alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int whichButton) {
-				// Canceled. Do nothing.
-			}
-		});
-
-		alert.show();
+			return t / rssiVals.size();
+		}
 	}
 }
-
-

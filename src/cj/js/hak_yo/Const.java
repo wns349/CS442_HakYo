@@ -15,6 +15,8 @@ public final class Const {
 	public static final String FOUND_BEACONS_KEY = "found.beacons";
 	public static final long BLE_SERVICE_SLEEP_TIME = 500L;
 
+	public static final int ADD_FRIEND_BEACON_SCAN_THRESHOLD = 3;
+
 	public static class BeaconConst {
 		public static final String UUID_2 = "1";
 		public static final String UUID_3 = "2";
