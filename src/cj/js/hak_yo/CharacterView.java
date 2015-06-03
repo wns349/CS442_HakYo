@@ -48,6 +48,10 @@ public class CharacterView {
 		} else {
 			balloonLayout.setVisibility(View.GONE);
 		}
+//		if(friendList.get(0) != null && friendList.get(0).getBeacon() != null){
+//		txtBalloon.setText(String.valueOf(friendList.get(0).getBeacon().getRssi()));
+//		balloonLayout.setVisibility(View.VISIBLE);
+//		}
 
 		if (!isVisible()) {
 			imgCharacter.setImageResource(R.drawable.c0);
