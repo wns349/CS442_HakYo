@@ -19,6 +19,7 @@ public class SettingFragment extends PreferenceFragment implements
 	@Override
 	public void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
 		settingHelper = new SettingHelper(getActivity());
 
 		PreferenceManager.getDefaultSharedPreferences(getActivity())

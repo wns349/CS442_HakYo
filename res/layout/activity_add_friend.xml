@@ -2,7 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    android:paddingTop="?android:attr/actionBarSize" >
 
     <LinearLayout
         android:layout_width="fill_parent"
@@ -12,17 +13,17 @@
 
         <EditText
             android:id="@+id/edt_mac_address"
-            android:layout_weight="1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:hint="Enter MAC Address"
             android:text="1f3ec053-977f-3611-98c2-a7eed4701c6f" />
 
         <Button
             android:id="@+id/btn_add_friend"
-            android:layout_weight="1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:text="ADD FRIEND" />
     </LinearLayout>
 
