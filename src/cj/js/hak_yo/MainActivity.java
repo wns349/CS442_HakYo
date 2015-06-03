@@ -30,6 +30,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.Toast;
 import cj.js.hak_yo.ble.BLECallback;
 import cj.js.hak_yo.ble.BLEService;
@@ -213,6 +214,11 @@ public class MainActivity extends Activity implements BLECallback {
 		character.showView(friendList);
 	}
 
+	private void showNoOneCharacter(boolean isRoadEmpty) {
+		ImageView noOne = (ImageView) findViewById(R.id.img_character_noone);
+		noOne.setVisibility(isRoadEmpty ? View.VISIBLE : View.GONE);
+	}
+
 	private void hideCharacter(int index) {
 		CharacterView character = null;
 		if ((character = characters[index]) == null) {
@@ -309,6 +315,7 @@ public class MainActivity extends Activity implements BLECallback {
 					}
 				}
 
+				boolean isRoadEmpty = true;
 				for (int index = 0; index < characters.length; index++) {
 					List<FoundBeacon> friendList = friendsAtLocations
 							.get(index);
@@ -317,9 +324,12 @@ public class MainActivity extends Activity implements BLECallback {
 						hideCharacter(index);
 					} else {
 						// Show
+						isRoadEmpty = false;
 						showCharacter(index, friendList);
 					}
 				}
+
+				showNoOneCharacter(isRoadEmpty);
 			}
 		});
 	}

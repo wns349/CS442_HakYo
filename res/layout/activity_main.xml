@@ -196,4 +196,13 @@
             android:text="@string/zero" />
     </RelativeLayout>
 
+    <ImageView
+        android:id="@+id/img_character_noone"
+        android:layout_width="120dp"
+        android:layout_height="152dp"
+        android:layout_alignTop="@id/space_center_below"
+        android:layout_toEndOf="@id/space_center"
+        android:contentDescription="@string/hello_world"
+        android:src="@drawable/noone" />
+
 </RelativeLayout>
