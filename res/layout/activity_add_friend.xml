@@ -20,12 +20,23 @@
             android:text="1f3ec053-977f-3611-98c2-a7eed4701c6f" />
 
         <Button
-            android:id="@+id/btn_add_friend"
+            android:id="@+id/btn_add_device"
+            android:layout_weight="1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="ADD FRIEND" />
+            android:text="ADD DEVICE" />
     </LinearLayout>
+
+	<TextView
+        android:id="@+id/txt_nearby_device"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Nearby devices" />
+	<ListView
+        android:id="@+id/list_devices"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" >
+    </ListView>
 
     <TextView
         android:id="@+id/txt_my_mac_addr"
@@ -42,7 +53,7 @@
     <ListView
         android:id="@+id/list_friends"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent" >
+        android:layout_height="wrap_content" >
     </ListView>
 
 </LinearLayout>
