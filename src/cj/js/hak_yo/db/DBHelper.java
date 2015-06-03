@@ -96,6 +96,23 @@ public class DBHelper extends SQLiteOpenHelper {
 		}
 	}
 
+	public String getFriendAlias(Beacon beacon) {
+		if (beacon == null)
+			return null;
+
+		Collection<FriendInfo> friendInfos = this.selectFriendInfos();
+		Iterator<FriendInfo> itr = friendInfos.iterator();
+		while (itr.hasNext()) {
+			FriendInfo friendInfo = itr.next();
+			if (friendInfo.getUUID().equalsIgnoreCase(
+					beacon.getId1().toUuidString())) {
+				return friendInfo.getAlias();
+			}
+		}
+
+		return null;
+	}
+
 	public Collection<FoundBeacon> filterFriends(Collection<Beacon> beacons) {
 		List<FoundBeacon> friendsFound = new ArrayList<FoundBeacon>();
 		Collection<FriendInfo> friendInfos = this.selectFriendInfos();
@@ -122,5 +139,16 @@ public class DBHelper extends SQLiteOpenHelper {
 	private boolean isFriend(Beacon beacon, FriendInfo friendInfo) {
 		return friendInfo.getUUID().equalsIgnoreCase(
 				beacon.getId1().toUuidString());
+	}
+
+	public void deleteAll() {
+		SQLiteDatabase db = getReadableDatabase();
+
+		try {
+			db.delete(Const.DatabaseConst.TABLE_NAME, null, null);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		} finally {
+		}
 	}
 }
