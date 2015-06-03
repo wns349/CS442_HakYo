@@ -1,20 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
 
-    <CheckBoxPreference
-        android:defaultValue="true"
-        android:key="@string/pref_advertise"
-        android:summary="@string/pref_advertise"
-        android:title="@string/pref_advertise" />
-    <CheckBoxPreference
-        android:defaultValue="true"
-        android:key="@string/pref_scan"
-        android:summary="@string/pref_scan"
-        android:title="@string/pref_scan" />
+    <PreferenceCategory android:title="Hak-Yo" >
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="@string/pref_advertise"
+            android:summary="@string/pref_advertise"
+            android:title="@string/pref_advertise" />
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="@string/pref_scan"
+            android:summary="@string/pref_scan"
+            android:title="@string/pref_scan" />
 
-    <cj.js.hak_yo.setting.DoNotDisturbPreference
-        android:key="@string/pref_do_not_disturb"
-        android:summary="@string/pref_do_not_disturb_title"
-        android:title="@string/pref_do_not_disturb_title" />
+        <cj.js.hak_yo.setting.DoNotDisturbPreference
+            android:key="@string/pref_do_not_disturb"
+            android:summary="@string/pref_do_not_disturb_title"
+            android:title="@string/pref_do_not_disturb_title" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="My Info" >
+        <Preference
+            android:enabled="true"
+            android:key="@string/pref_myinfo"
+            android:selectable="true"
+            android:title="@string/pref_myinfo" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="Just for fun" >
+        <Preference
+            android:enabled="true"
+            android:key="@string/pref_deleteall"
+            android:selectable="true"
+            android:summary="@string/pref_deleteall_content"
+            android:title="@string/pref_deleteall_title" />
+        <Preference
+            android:enabled="true"
+            android:key="@string/pref_dev_team"
+            android:selectable="true"
+            android:title="@string/pref_dev_team" />
+    </PreferenceCategory>
 
 </PreferenceScreen>

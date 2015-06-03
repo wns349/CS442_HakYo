@@ -140,4 +140,15 @@ public class DBHelper extends SQLiteOpenHelper {
 		return friendInfo.getUUID().equalsIgnoreCase(
 				beacon.getId1().toUuidString());
 	}
+
+	public void deleteAll() {
+		SQLiteDatabase db = getReadableDatabase();
+
+		try {
+			db.delete(Const.DatabaseConst.TABLE_NAME, null, null);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		} finally {
+		}
+	}
 }
