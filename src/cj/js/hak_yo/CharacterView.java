@@ -32,13 +32,14 @@ public class CharacterView {
 		if (isStart) {
 			imgCharacter.startAnimation(anim);
 		} else {
-			imgCharacter.animate().cancel();
+			imgCharacter.clearAnimation();
 		}
 	}
 
 	public void hideView() {
-		imgCharacter.setVisibility(View.GONE);
+		doAnimation(false);
 		balloonLayout.setVisibility(View.GONE);
+		imgCharacter.setVisibility(View.GONE);
 	}
 
 	public void showView(List<FoundBeacon> friendList) {
