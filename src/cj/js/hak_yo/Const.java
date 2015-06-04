@@ -6,7 +6,7 @@ import java.util.List;
 public final class Const {
 
 	public static final int SPLASH_TIME_OUT = 1500;
-	
+
 	public static final int REQUEST_ENABLE_BT = 1842;
 	public static final int NOTIFICATION_ID = 1353;
 	public static final int NOTIFICATION_TTL = 5;
@@ -34,11 +34,16 @@ public final class Const {
 		public static final String COLUMN_NAME_UUID = "UUID";
 		public static final String COLUMN_NAME_ALIAS = "alias";
 		public static final String COLUMN_NAME_RSSI = "rssi";
+		public static final String COLUMN_NAME_CHARACTER = "character";
 
 		public static final int DATABASE_VERSION = 1;
 		public static final String DATABASE_NAME = "HakYo.db";
 
 		public static final String TYPE_TEXT = "TEXT";
 		public static final String TYPE_INTEGER = "INTEGER";
+	}
+
+	public static enum Character {
+		c1, c2, c3, c4, c0;
 	}
 }

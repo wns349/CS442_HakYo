@@ -32,31 +32,44 @@ public class NotificationHelperTest extends InstrumentationTestCase {
 				getInstrumentation().getContext());
 
 		List<FoundBeacon> foundBeacons = new ArrayList<FoundBeacon>();
-		foundBeacons.add(new FoundBeacon(new FriendInfo("A", "A", 1), null));
-		foundBeacons.add(new FoundBeacon(new FriendInfo("B", "B", 1), null));
-		foundBeacons.add(new FoundBeacon(new FriendInfo("C", "C", 1), null));
-		foundBeacons.add(new FoundBeacon(new FriendInfo("D", "D", 1), null));
+		foundBeacons.add(new FoundBeacon(new FriendInfo("A", "A", 1, "c1"),
+				null));
+		foundBeacons.add(new FoundBeacon(new FriendInfo("B", "B", 1, "c1"),
+				null));
+		foundBeacons.add(new FoundBeacon(new FriendInfo("C", "C", 1, "c1"),
+				null));
+		foundBeacons.add(new FoundBeacon(new FriendInfo("D", "D", 1, "c1"),
+				null));
 
 		notiHelper.sendNotification(foundBeacons, null);
 
 		Thread.sleep(500);
 		foundBeacons.clear();
-		foundBeacons.add(new FoundBeacon(new FriendInfo("B", "B", 1), null));
-		foundBeacons.add(new FoundBeacon(new FriendInfo("C", "C", 1), null));
-		foundBeacons.add(new FoundBeacon(new FriendInfo("D", "D", 1), null));
+		foundBeacons.add(new FoundBeacon(new FriendInfo("B", "B", 1, "c1"),
+				null));
+		foundBeacons.add(new FoundBeacon(new FriendInfo("C", "C", 1, "c1"),
+				null));
+		foundBeacons.add(new FoundBeacon(new FriendInfo("D", "D", 1, "c1"),
+				null));
 
 		Thread.sleep(500);
 
 		foundBeacons.clear();
-		foundBeacons.add(new FoundBeacon(new FriendInfo("B", "B", 1), null));
-		foundBeacons.add(new FoundBeacon(new FriendInfo("E", "E", 1), null));
-		foundBeacons.add(new FoundBeacon(new FriendInfo("D", "D", 1), null));
+		foundBeacons.add(new FoundBeacon(new FriendInfo("B", "B", 1, "c1"),
+				null));
+		foundBeacons.add(new FoundBeacon(new FriendInfo("E", "E", 1, "c1"),
+				null));
+		foundBeacons.add(new FoundBeacon(new FriendInfo("D", "D", 1, "c1"),
+				null));
 
 		Thread.sleep(500);
 		foundBeacons.clear();
-		foundBeacons.add(new FoundBeacon(new FriendInfo("F", "F", 1), null));
-		foundBeacons.add(new FoundBeacon(new FriendInfo("C", "C", 1), null));
-		foundBeacons.add(new FoundBeacon(new FriendInfo("B", "B", 1), null));
+		foundBeacons.add(new FoundBeacon(new FriendInfo("F", "F", 1, "c1"),
+				null));
+		foundBeacons.add(new FoundBeacon(new FriendInfo("C", "C", 1, "c1"),
+				null));
+		foundBeacons.add(new FoundBeacon(new FriendInfo("B", "B", 1, "c1"),
+				null));
 
 		Thread.sleep(500);
 

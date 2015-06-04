@@ -287,7 +287,37 @@ public class MainActivity extends Activity implements BLECallback {
 
 	private int getCharacterIndex(FoundBeacon foundBeacon) {
 		// TODO
-		return 0;
+		int A = foundBeacon.getFriendInfo().getRssi();
+		int N = 2;
+		int Rssi = foundBeacon.getBeacon().getRssi();
+
+		double distance = Math.pow(10, (Rssi + A) / (double)(-10 * N));
+		distance = distance / 1E6;
+		//double distance = foundBeacon.getBeacon().getDistance();
+		//double distance = Math.abs(foundBeacon.getFriendInfo().getRssi() - foundBeacon.getBeacon().getRssi()) / (double)6; 
+		
+		Log.d(TAG, "getCharIndex: RSSI:"+Rssi+" / A: "+A+" / distance: "+distance);
+		Log.d(TAG, "ss:"+Rssi+":"+distance);
+		//Log.d(TAG, "getDistance: " + foundBeacon.getBeacon().getDistance());
+		
+//		if (distance <= 2) {
+//			return 4;
+//		} else if (distance <= 4) {
+//			return 3;
+//		} else if (distance <= 6) {
+//			return 2;
+//		} else if (distance <= 9) {
+//			return 1;
+//		} else {
+//			return 0;
+//		}
+		if(distance <= 4){
+			return 3;
+		} else if (distance <= 9){
+			return 2;
+		} else {
+			return 1;
+		}
 	}
 
 	@Override

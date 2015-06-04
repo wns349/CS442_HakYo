@@ -3,17 +3,22 @@ package cj.js.hak_yo.db;
 public class FriendInfo {
 	private String uuid;
 	private String alias;
+	private String character;
 	private int rssi;
 
 	public FriendInfo() {
 
 	}
 
-	public FriendInfo(String alias, String uuid, int rssi) {
+	public FriendInfo(String alias, String uuid, int rssi, String character) {
 		setAlias(alias);
 		setUUID(uuid);
 		setRssi(rssi);
+		setCharacter(character);
+	}
 
+	private void setCharacter(String character) {
+		this.character = character;
 	}
 
 	public String getUUID() {
@@ -43,5 +48,9 @@ public class FriendInfo {
 	@Override
 	public String toString() {
 		return alias + "/" + uuid + "/" + rssi;
+	}
+
+	public String getCharacter() {
+		return character;
 	}
 }

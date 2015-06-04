@@ -44,6 +44,8 @@ public class DBHelper extends SQLiteOpenHelper {
 				.append(Const.DatabaseConst.TYPE_TEXT).append(" PRIMARY KEY,");
 		sb.append(Const.DatabaseConst.COLUMN_NAME_ALIAS).append(" ")
 				.append(Const.DatabaseConst.TYPE_TEXT).append(",");
+		sb.append(Const.DatabaseConst.COLUMN_NAME_CHARACTER).append(" ")
+				.append(Const.DatabaseConst.TYPE_TEXT).append(",");
 		sb.append(Const.DatabaseConst.COLUMN_NAME_RSSI).append(" ")
 				.append(Const.DatabaseConst.TYPE_INTEGER);
 		sb.append(", UNIQUE (");
@@ -60,6 +62,8 @@ public class DBHelper extends SQLiteOpenHelper {
 		values.put(Const.DatabaseConst.COLUMN_NAME_ALIAS, friendInfo.getAlias());
 		values.put(Const.DatabaseConst.COLUMN_NAME_UUID, friendInfo.getUUID());
 		values.put(Const.DatabaseConst.COLUMN_NAME_RSSI, friendInfo.getRssi());
+		values.put(Const.DatabaseConst.COLUMN_NAME_CHARACTER,
+				friendInfo.getCharacter());
 
 		long newRowId = db.insertWithOnConflict(Const.DatabaseConst.TABLE_NAME,
 				null, values, SQLiteDatabase.CONFLICT_REPLACE);
@@ -72,7 +76,8 @@ public class DBHelper extends SQLiteOpenHelper {
 
 		String[] projection = { Const.DatabaseConst.COLUMN_NAME_ALIAS,
 				Const.DatabaseConst.COLUMN_NAME_UUID,
-				Const.DatabaseConst.COLUMN_NAME_RSSI };
+				Const.DatabaseConst.COLUMN_NAME_RSSI,
+				Const.DatabaseConst.COLUMN_NAME_CHARACTER };
 
 		Cursor c = null;
 
@@ -82,7 +87,7 @@ public class DBHelper extends SQLiteOpenHelper {
 					null, null, null, null);
 			while (c.moveToNext()) {
 				FriendInfo friendInfo = new FriendInfo(c.getString(0),
-						c.getString(1), c.getInt(2));
+						c.getString(1), c.getInt(2), c.getString(3));
 				fInfo.add(friendInfo);
 			}
 

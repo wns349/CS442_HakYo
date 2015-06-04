@@ -186,7 +186,10 @@ public class AddFriendActivity extends Activity implements BLECallback {
 			dbHelper = new DBHelper(this);
 		}
 
-		FriendInfo friendInfo = new FriendInfo(friendName, macAddress, rssi);
+		int randomCharacter = (int) (System.currentTimeMillis() % Const.Character
+				.values().length);
+		FriendInfo friendInfo = new FriendInfo(friendName, macAddress, rssi,
+				Const.Character.values()[randomCharacter].name());
 		dbHelper.insertFriendInfo(friendInfo);
 	}
 

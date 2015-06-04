@@ -12,6 +12,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import cj.js.hak_yo.Const.Character;
 import cj.js.hak_yo.ble.FoundBeacon;
 
 public class CharacterView {
@@ -52,13 +53,30 @@ public class CharacterView {
 		} else {
 			balloonLayout.setVisibility(View.GONE);
 		}
-//		if(friendList.get(0) != null && friendList.get(0).getBeacon() != null){
-//		txtBalloon.setText(String.valueOf(friendList.get(0).getBeacon().getRssi()));
-//		balloonLayout.setVisibility(View.VISIBLE);
-//		}
+		// if(friendList.get(0) != null && friendList.get(0).getBeacon() !=
+		// null){
+		// txtBalloon.setText(String.valueOf(friendList.get(0).getBeacon().getRssi()));
+		// balloonLayout.setVisibility(View.VISIBLE);
+		// }
 
 		if (!isVisible()) {
-			imgCharacter.setImageResource(R.drawable.c0);
+			Character character = Const.Character.valueOf(friendList.get(0)
+					.getFriendInfo().getCharacter());
+			switch (character) {
+			case c0:
+				imgCharacter.setImageResource(R.drawable.c0);
+				break;
+			case c1:
+				imgCharacter.setImageResource(R.drawable.c1);
+			case c2:
+				imgCharacter.setImageResource(R.drawable.c2);
+			case c3:
+				imgCharacter.setImageResource(R.drawable.c3);
+			case c4:
+			default:
+				imgCharacter.setImageResource(R.drawable.c4);
+				break;
+			}
 			imgCharacter.setVisibility(View.VISIBLE);
 
 			doAnimation(true);
