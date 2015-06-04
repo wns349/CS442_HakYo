@@ -31,6 +31,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 import cj.js.hak_yo.ble.BLECallback;
 import cj.js.hak_yo.ble.BLEService;
@@ -216,7 +217,11 @@ public class MainActivity extends Activity implements BLECallback {
 
 	private void showNoOneCharacter(boolean isRoadEmpty) {
 		ImageView noOne = (ImageView) findViewById(R.id.img_character_noone);
+		ImageView noOneBalloon = (ImageView) findViewById(R.id.img_character_noone_balloon);
+		TextView noOneText = (TextView) findViewById(R.id.txt_character_noone_balloon);
 		noOne.setVisibility(isRoadEmpty ? View.VISIBLE : View.GONE);
+		noOneBalloon.setVisibility(isRoadEmpty ? View.VISIBLE : View.GONE);
+		noOneText.setVisibility(isRoadEmpty ? View.VISIBLE : View.GONE);
 	}
 
 	private void hideCharacter(int index) {

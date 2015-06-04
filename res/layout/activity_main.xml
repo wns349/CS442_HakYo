@@ -205,4 +205,27 @@
         android:contentDescription="@string/hello_world"
         android:src="@drawable/noone" />
 
+    <ImageView
+        android:id="@+id/img_character_noone_balloon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/space_center_sun"
+        android:layout_centerHorizontal="true"
+        android:layout_toStartOf="@id/img_character_noone"
+        android:contentDescription="@string/hello_world"
+        android:src="@drawable/noone_balloon" />
+    
+    <TextView
+        android:id="@+id/txt_character_noone_balloon"
+        android:layout_width="100dp"
+        android:layout_height="60dp"
+        android:layout_below="@+id/space_center_sun"
+        android:layout_centerHorizontal="true"
+        android:layout_toStartOf="@id/img_character_noone"
+        android:textAlignment="center"
+        android:gravity="center"
+        android:text="@string/anyone"
+        android:textSize="16sp"
+        />
+
 </RelativeLayout>

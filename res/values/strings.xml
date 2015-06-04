@@ -4,6 +4,7 @@
     <string name="app_name">Hak-yo</string>
     <string name="hello_world">Hello world!</string>
     <string name="zero">0</string>
+    <string name="anyone">Anyone..?</string>
 
     <!-- Misc -->
     <string name="from">From</string>
