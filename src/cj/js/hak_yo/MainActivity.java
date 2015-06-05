@@ -37,6 +37,7 @@ import android.widget.Toast;
 import cj.js.hak_yo.ble.BLECallback;
 import cj.js.hak_yo.ble.BLEService;
 import cj.js.hak_yo.ble.FoundBeacon;
+import cj.js.hak_yo.character.Character;
 import cj.js.hak_yo.db.DBHelper;
 import cj.js.hak_yo.friend.AddFriendActivity;
 import cj.js.hak_yo.setting.SettingActivity;
@@ -51,7 +52,7 @@ public class MainActivity extends Activity implements BLECallback {
 
 	private SettingHelper settingHelper = null;
 
-	private Map<String, CharacterView> characters = new HashMap<String, CharacterView>();
+	private Map<String, Character> characters = new HashMap<String, Character>();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -188,20 +189,22 @@ public class MainActivity extends Activity implements BLECallback {
 
 	private void showFriend(FoundBeacon friend) {
 		String friendId = friend.getFriendInfo().getUUID();
-		CharacterView characterView = characters.get(friendId);
-		if (characterView == null) {
+		Character character = characters.get(friendId);
+		if (character == null) {
 			Log.d(TAG, "Generating new character view: " + friendId);
 			// Make new character view
-			characterView = new CharacterView(this, friend.getFriendInfo(),
+			character = new Character(this, friend.getFriendInfo(),
 					(ViewGroup) findViewById(R.id.layout_main));
 			ViewGroup mainLayout = (ViewGroup) findViewById(R.id.layout_main);
-			mainLayout.addView(characterView);
-			characters.put(friendId, characterView);
+			mainLayout.addView(character.getCharacterView());
+			mainLayout.addView(character.getCharacterBalloonView());
+			character.initialize();
+			characters.put(friendId, character);
 		}
 
 		int targetIndexToGo = getCharacterIndex(friend);
 		Log.d(TAG, "ShowFriend: " + targetIndexToGo + " , " + friendId);
-		characterView.moveTo(targetIndexToGo, true);
+		character.moveCharacterTo(targetIndexToGo, true);
 	}
 
 	private void removeFriend(String characterToRemoveId) {
@@ -209,16 +212,17 @@ public class MainActivity extends Activity implements BLECallback {
 			return;
 		}
 
-		CharacterView characterToRemove = characters
-				.remove(characterToRemoveId);
+		Character characterToRemove = characters.remove(characterToRemoveId);
 		if (characterToRemove == null) {
 			return;
 		}
 
 		ViewGroup mainLayout = (ViewGroup) findViewById(R.id.layout_main);
-		mainLayout.removeView(characterToRemove);
+		mainLayout.removeView(characterToRemove.getCharacterView());
+		mainLayout.removeView(characterToRemove.getCharacterBalloonView());
 
 		// Garbage collected characterToRemove
+		characterToRemove = null;
 	}
 
 	private void showNoOneCharacter(boolean isRoadEmpty) {

@@ -1,4 +1,4 @@
-package cj.js.hak_yo;
+package cj.js.hak_yo.character;
 
 import android.content.Context;
 import android.util.Log;
@@ -14,7 +14,9 @@ import android.view.animation.ScaleAnimation;
 import android.view.animation.TranslateAnimation;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import cj.js.hak_yo.Const;
 import cj.js.hak_yo.Const.Character;
+import cj.js.hak_yo.R;
 import cj.js.hak_yo.db.FriendInfo;
 
 public class CharacterView extends RelativeLayout {
@@ -35,50 +37,37 @@ public class CharacterView extends RelativeLayout {
 		this.friendInfo = friendInfo;
 		this.mainLayout = mainLayout;
 		initializeView(context);
-
-		// Start at 0
-		moveTo(2, false);
 	}
 
 	private void initializeView(Context context) {
 		LayoutInflater inflater = LayoutInflater.from(context);
 		inflater.inflate(R.layout.character_view, this);
 
-		imgCharacter = (ImageView) this.findViewById(R.id.img_character);
+		setCharacterImageView((ImageView) this.findViewById(R.id.img_character));
 
 		Character character = Const.Character
 				.valueOf(friendInfo.getCharacter());
 		switch (character) {
 		case c0:
-			imgCharacter.setImageResource(R.drawable.c0);
+			getCharacterImageView().setImageResource(R.drawable.c0);
 			break;
 		case c1:
-			imgCharacter.setImageResource(R.drawable.c1);
+			getCharacterImageView().setImageResource(R.drawable.c1);
 			break;
 		case c2:
-			imgCharacter.setImageResource(R.drawable.c2);
+			getCharacterImageView().setImageResource(R.drawable.c2);
 			break;
 		case c3:
-			imgCharacter.setImageResource(R.drawable.c3);
+			getCharacterImageView().setImageResource(R.drawable.c3);
 			break;
 		case c4:
-			imgCharacter.setImageResource(R.drawable.c4);
+			getCharacterImageView().setImageResource(R.drawable.c4);
 		default:
 			break;
 		}
-
-	}
-
-	@Override
-	protected void onAnimationEnd() {
-		super.onAnimationEnd();
 	}
 
 	public void moveTo(int targetIndexToGo, boolean doAnimation) {
-		if (prevAnimation.getLastIndex() == targetIndexToGo) {
-			return;
-		}
-
 		final View self = this;
 		if (doAnimation) {
 			if (prevAnimation.isFirstRun()) {
@@ -102,22 +91,26 @@ public class CharacterView extends RelativeLayout {
 			float sx, sy, ssx, ssy;
 			int fromLoc[] = new int[2];
 			self.getLocationOnScreen(fromLoc);
-			tx = fromLoc[0];
-			ty = fromLoc[1];
+			int toLoc[] = new int[2];
+			destView.getLocationOnScreen(toLoc);
+//			ttx = toLoc[0];
+//			tty = toLoc[1];
+//			tx = fromLoc[0];
+//			ty = fromLoc[1];
+			tx = self.getX();
+			ty = self.getY();
+			ttx = destView.getX();
+			tty = destView.getY();
 
 			sx = self.getLayoutParams().width;
 			sy = self.getLayoutParams().height;
 			ssx = destView.getLayoutParams().width;
 			ssy = destView.getLayoutParams().height;
-			// }
 
 			// Close existing animation
 			this.clearAnimation();
 
-			int toLoc[] = new int[2];
-			destView.getLocationOnScreen(toLoc);
-			ttx = toLoc[0];
-			tty = toLoc[1];
+		
 
 			TranslateAnimation animTranslate = new TranslateAnimation(0, ttx
 					- tx, 0, tty - ty);
@@ -207,6 +200,18 @@ public class CharacterView extends RelativeLayout {
 		}
 	}
 
+	public ImageView getCharacterImageView() {
+		return imgCharacter;
+	}
+
+	public void setCharacterImageView(ImageView imgCharacter) {
+		this.imgCharacter = imgCharacter;
+	}
+
+	public PrevAnimation getPrevAnimation() {
+		return this.prevAnimation;
+	}
+
 	class PrevAnimation {
 		private AnimationSet animation;
 		private int lastIndex;
@@ -243,4 +248,5 @@ public class CharacterView extends RelativeLayout {
 			this.isFirstRun = isFirstRun;
 		}
 	}
+
 }
