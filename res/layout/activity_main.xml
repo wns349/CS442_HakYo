@@ -1,5 +1,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layout_main"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:animateLayoutChanges="true"
@@ -34,39 +35,15 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true" />
 
-    <ImageView
-        android:id="@+id/img_character_loc_01"
+    <Space
+        android:id="@+id/space_character_loc_01"
         android:layout_width="30dp"
         android:layout_height="43dp"
         android:layout_alignTop="@id/space_center_sun"
-        android:layout_toEndOf="@id/space_center_sun"
-        android:contentDescription="@string/hello_world"
-        android:src="@drawable/c0" />
+        android:layout_toEndOf="@id/space_center_sun" />
 
-    <RelativeLayout
-        android:id="@+id/layout_character_balloon_01"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@id/img_character_loc_01"
-        android:layout_toStartOf="@id/img_character_loc_01" >
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:contentDescription="@string/hello_world"
-            android:src="@drawable/balloon" />
-
-        <TextView
-            android:id="@+id/txt_character_01"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:text="@string/zero" />
-    </RelativeLayout>
-
-    <ImageView
-        android:id="@+id/img_character_loc_02"
+    <Space
+        android:id="@+id/space_character_loc_02"
         android:layout_width="50dp"
         android:layout_height="71dp"
         android:layout_alignTop="@id/space_center"
@@ -74,30 +51,8 @@
         android:contentDescription="@string/hello_world"
         android:src="@drawable/c1" />
 
-    <RelativeLayout
-        android:id="@+id/layout_character_balloon_02"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@id/img_character_loc_02"
-        android:layout_toStartOf="@id/img_character_loc_02" >
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:contentDescription="@string/hello_world"
-            android:src="@drawable/balloon" />
-
-        <TextView
-            android:id="@+id/txt_character_02"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:text="@string/zero" />
-    </RelativeLayout>
-
-    <ImageView
-        android:id="@+id/img_character_loc_03"
+    <Space
+        android:id="@+id/space_character_loc_03"
         android:layout_width="75dp"
         android:layout_height="107dp"
         android:layout_alignTop="@id/space_center_below"
@@ -105,30 +60,8 @@
         android:contentDescription="@string/hello_world"
         android:src="@drawable/c2" />
 
-    <RelativeLayout
-        android:id="@+id/layout_character_balloon_03"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@id/img_character_loc_03"
-        android:layout_toStartOf="@id/img_character_loc_03" >
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:contentDescription="@string/hello_world"
-            android:src="@drawable/balloon" />
-
-        <TextView
-            android:id="@+id/txt_character_03"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:text="@string/zero" />
-    </RelativeLayout>
-
-    <ImageView
-        android:id="@+id/img_character_loc_04"
+    <Space
+        android:id="@+id/space_character_loc_04"
         android:layout_width="120dp"
         android:layout_height="171dp"
         android:layout_below="@id/space_center_below"
@@ -143,57 +76,13 @@
         android:layout_alignBottom="@id/space_RB_corner"
         android:layout_alignEnd="@id/space_RB_corner" >
 
-        <ImageView
-            android:id="@+id/img_character_loc_05"
+        <Space
+            android:id="@+id/space_character_loc_05"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:contentDescription="@string/hello_world"
             android:scaleType="matrix"
             android:src="@drawable/c4" />
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:id="@+id/layout_character_balloon_05"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@id/layout_RB_corner"
-        android:layout_alignEnd="@id/layout_RB_corner" >
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:contentDescription="@string/hello_world"
-            android:src="@drawable/balloon" />
-
-        <TextView
-            android:id="@+id/txt_character_05"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:text="@string/zero" />
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:id="@+id/layout_character_balloon_04"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/img_character_loc_03"
-        android:layout_toStartOf="@id/img_character_loc_04" >
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:contentDescription="@string/hello_world"
-            android:src="@drawable/balloon" />
-
-        <TextView
-            android:id="@+id/txt_character_04"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:text="@string/zero" />
     </RelativeLayout>
 
     <ImageView
@@ -214,7 +103,7 @@
         android:layout_toStartOf="@id/img_character_noone"
         android:contentDescription="@string/hello_world"
         android:src="@drawable/noone_balloon" />
-    
+
     <TextView
         android:id="@+id/txt_character_noone_balloon"
         android:layout_width="100dp"
@@ -222,10 +111,9 @@
         android:layout_below="@+id/space_center_sun"
         android:layout_centerHorizontal="true"
         android:layout_toStartOf="@id/img_character_noone"
-        android:textAlignment="center"
         android:gravity="center"
         android:text="@string/anyone"
-        android:textSize="16sp"
-        />
+        android:textAlignment="center"
+        android:textSize="16sp" />
 
 </RelativeLayout>

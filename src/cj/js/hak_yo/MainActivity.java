@@ -1,11 +1,11 @@
 package cj.js.hak_yo;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.altbeacon.beacon.Beacon;
 import org.altbeacon.beacon.Region;
@@ -28,6 +28,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
@@ -50,20 +51,7 @@ public class MainActivity extends Activity implements BLECallback {
 
 	private SettingHelper settingHelper = null;
 
-	private CharacterView[] characters = null;
-
-	private final int[] imgCharacters = { R.id.img_character_loc_01,
-			R.id.img_character_loc_02, R.id.img_character_loc_03,
-			R.id.img_character_loc_04, R.id.img_character_loc_05 };
-	private final int[] layoutCharacters = { R.id.layout_character_balloon_01,
-			R.id.layout_character_balloon_02, R.id.layout_character_balloon_03,
-			R.id.layout_character_balloon_04, R.id.layout_character_balloon_05 };
-	private final int[] txtCharacters = { R.id.txt_character_01,
-			R.id.txt_character_02, R.id.txt_character_03,
-			R.id.txt_character_04, R.id.txt_character_05 };
-
-	// key: index, value: friendList
-	private Map<Integer, List<FoundBeacon>> friendsAtLocations = new HashMap<Integer, List<FoundBeacon>>();
+	private Map<String, CharacterView> characters = new HashMap<String, CharacterView>();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -195,24 +183,42 @@ public class MainActivity extends Activity implements BLECallback {
 	}
 
 	private void initializeViews() {
-		characters = new CharacterView[imgCharacters.length];
-		for (int i = 0; i < imgCharacters.length; i++) {
 
-			characters[i] = new CharacterView(getApplicationContext(),
-					getWindow().getDecorView().findViewById(
-							android.R.id.content), imgCharacters[i],
-					layoutCharacters[i], txtCharacters[i]);
-			hideCharacter(i);
-		}
 	}
 
-	private void showCharacter(int index, List<FoundBeacon> friendList) {
-		CharacterView character = null;
-		if ((character = characters[index]) == null) {
+	private void showFriend(FoundBeacon friend) {
+		String friendId = friend.getFriendInfo().getUUID();
+		CharacterView characterView = characters.get(friendId);
+		if (characterView == null) {
+			Log.d(TAG, "Generating new character view: " + friendId);
+			// Make new character view
+			characterView = new CharacterView(this, friend.getFriendInfo(),
+					(ViewGroup) findViewById(R.id.layout_main));
+			ViewGroup mainLayout = (ViewGroup) findViewById(R.id.layout_main);
+			mainLayout.addView(characterView);
+			characters.put(friendId, characterView);
+		}
+
+		int targetIndexToGo = getCharacterIndex(friend);
+		Log.d(TAG, "ShowFriend: " + targetIndexToGo + " , " + friendId);
+		characterView.moveTo(targetIndexToGo, true);
+	}
+
+	private void removeFriend(String characterToRemoveId) {
+		if (characterToRemoveId == null) {
 			return;
 		}
 
-		character.showView(friendList);
+		CharacterView characterToRemove = characters
+				.remove(characterToRemoveId);
+		if (characterToRemove == null) {
+			return;
+		}
+
+		ViewGroup mainLayout = (ViewGroup) findViewById(R.id.layout_main);
+		mainLayout.removeView(characterToRemove);
+
+		// Garbage collected characterToRemove
 	}
 
 	private void showNoOneCharacter(boolean isRoadEmpty) {
@@ -222,15 +228,6 @@ public class MainActivity extends Activity implements BLECallback {
 		noOne.setVisibility(isRoadEmpty ? View.VISIBLE : View.GONE);
 		noOneBalloon.setVisibility(isRoadEmpty ? View.VISIBLE : View.GONE);
 		noOneText.setVisibility(isRoadEmpty ? View.VISIBLE : View.GONE);
-	}
-
-	private void hideCharacter(int index) {
-		CharacterView character = null;
-		if ((character = characters[index]) == null) {
-			return;
-		}
-
-		character.hideView();
 	}
 
 	private ServiceConnection bleServiceConnection = new ServiceConnection() {
@@ -286,34 +283,19 @@ public class MainActivity extends Activity implements BLECallback {
 	}
 
 	private int getCharacterIndex(FoundBeacon foundBeacon) {
-		// TODO
 		int A = foundBeacon.getFriendInfo().getRssi();
 		int N = 2;
 		int Rssi = foundBeacon.getBeacon().getRssi();
 
-		double distance = Math.pow(10, (Rssi + A) / (double)(-10 * N));
+		double distance = Math.pow(10, (Rssi + A) / (double) (-10 * N));
 		distance = distance / 1E6;
-		//double distance = foundBeacon.getBeacon().getDistance();
-		//double distance = Math.abs(foundBeacon.getFriendInfo().getRssi() - foundBeacon.getBeacon().getRssi()) / (double)6; 
-		
-		Log.d(TAG, "getCharIndex: RSSI:"+Rssi+" / A: "+A+" / distance: "+distance);
-		Log.d(TAG, "ss:"+Rssi+":"+distance);
-		//Log.d(TAG, "getDistance: " + foundBeacon.getBeacon().getDistance());
-		
-//		if (distance <= 2) {
-//			return 4;
-//		} else if (distance <= 4) {
-//			return 3;
-//		} else if (distance <= 6) {
-//			return 2;
-//		} else if (distance <= 9) {
-//			return 1;
-//		} else {
-//			return 0;
-//		}
-		if(distance <= 4){
+
+		Log.d(TAG, "getCharIndex: RSSI:" + Rssi + " / A: " + A
+				+ " / distance: " + distance);
+
+		if (distance <= 4) {
 			return 3;
-		} else if (distance <= 9){
+		} else if (distance <= 9) {
 			return 2;
 		} else {
 			return 1;
@@ -328,45 +310,25 @@ public class MainActivity extends Activity implements BLECallback {
 			public void run() {
 				Collection<FoundBeacon> friends = dbHelper
 						.filterFriends(foundBeacons);
-				// Clear
-				for (List<FoundBeacon> friendsAtLocation : friendsAtLocations
-						.values()) {
-					friendsAtLocation.clear();
+				Set<String> characterIdsToBeRemoved = new HashSet<String>(
+						characters.keySet());
+				Iterator<FoundBeacon> itr = friends.iterator();
+				while (itr.hasNext()) {
+					FoundBeacon friend = itr.next();
+					showFriend(friend);
+					// Remove friend's id
+					characterIdsToBeRemoved.remove(friend.getFriendInfo()
+							.getUUID());
 				}
 
-				// Identify which location
-				if (friends.size() > 0) {
-					Iterator<FoundBeacon> itr = friends.iterator();
-					while (itr.hasNext()) {
-						FoundBeacon foundBeacon = itr.next();
-						int index = getCharacterIndex(foundBeacon);
-						List<FoundBeacon> friendList = friendsAtLocations
-								.get(index);
-						if (friendList == null) {
-							friendList = new ArrayList<FoundBeacon>();
-							friendsAtLocations.put(index, friendList);
-						}
-						friendList.add(foundBeacon);
-					}
+				Iterator<String> itrToRemove = characterIdsToBeRemoved
+						.iterator();
+				while (itrToRemove.hasNext()) {
+					removeFriend(itrToRemove.next());
 				}
 
-				boolean isRoadEmpty = true;
-				for (int index = 0; index < characters.length; index++) {
-					List<FoundBeacon> friendList = friendsAtLocations
-							.get(index);
-					if (friendList == null || friendList.isEmpty()) {
-						// Hide
-						hideCharacter(index);
-					} else {
-						// Show
-						isRoadEmpty = false;
-						showCharacter(index, friendList);
-					}
-				}
-
-				showNoOneCharacter(isRoadEmpty);
+				showNoOneCharacter(friends.isEmpty());
 			}
 		});
 	}
-
 }

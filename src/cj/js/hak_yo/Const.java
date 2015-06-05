@@ -17,6 +17,8 @@ public final class Const {
 
 	public static final int ADD_FRIEND_BEACON_SCAN_THRESHOLD = 3;
 
+	public static final long ANIMATION_TIME = 1200L;
+
 	public static class BeaconConst {
 		public static final String UUID_2 = "1";
 		public static final String UUID_3 = "2";
