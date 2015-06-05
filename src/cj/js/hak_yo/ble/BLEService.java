@@ -12,7 +12,6 @@ import org.altbeacon.beacon.Region;
 
 import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.le.AdvertiseSettings;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Binder;
@@ -136,9 +135,9 @@ public class BLEService extends Service implements BeaconConsumer, Runnable {
 	private void initializeBeacon() {
 		Log.d(TAG, "Initializing BeaconManager");
 		beaconManager = BeaconManager.getInstanceForApplication(this);
-		//beaconManager.setForegroundScanPeriod(500L);
-		//beaconManager.setBackgroundScanPeriod(500L);
-				
+		// beaconManager.setForegroundScanPeriod(500L);
+		// beaconManager.setBackgroundScanPeriod(500L);
+
 		if (BLEUtil.isAdvertisingSupportedDevice()) {
 			Log.d(TAG, "Initializing BeaconParser - Android Lollipop detected!");
 
@@ -146,8 +145,8 @@ public class BLEService extends Service implements BeaconConsumer, Runnable {
 					.setBeaconLayout(Const.BeaconConst.LAYOUT_STRING);
 			beaconTransmitter = new BeaconTransmitter(getApplicationContext(),
 					beaconParser);
-			//beaconTransmitter.setAdvertiseMode(AdvertiseSettings.ADVERTISE_MODE_LOW_LATENCY);
-			//beaconTransmitter.setAdvertiseTxPowerLevel(AdvertiseSettings.ADVERTISE_TX_POWER_HIGH);
+			// beaconTransmitter.setAdvertiseMode(AdvertiseSettings.ADVERTISE_MODE_LOW_LATENCY);
+			// beaconTransmitter.setAdvertiseTxPowerLevel(AdvertiseSettings.ADVERTISE_TX_POWER_HIGH);
 		}
 	}
 

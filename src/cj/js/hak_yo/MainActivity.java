@@ -1,9 +1,11 @@
 package cj.js.hak_yo;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -53,6 +55,8 @@ public class MainActivity extends Activity implements BLECallback {
 	private SettingHelper settingHelper = null;
 
 	private Map<String, Character> characters = new HashMap<String, Character>();
+
+	private FoundBeaconHistory foundBeaconHistory = new FoundBeaconHistory();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -306,16 +310,40 @@ public class MainActivity extends Activity implements BLECallback {
 		}
 	}
 
+	private boolean shouldShowOnUI(final Collection<FoundBeacon> friends) {
+		List<String> previouslyFoundBeaconIds = foundBeaconHistory
+				.getPreviouslyFoundBeaconIds();
+		if (friends.size() != previouslyFoundBeaconIds.size()) {
+			foundBeaconHistory.setFoundBeaconIds(friends);
+			return false;
+		}
+		for (FoundBeacon friend : friends) {
+			if (!previouslyFoundBeaconIds.contains(friend.getFriendInfo()
+					.getUUID())) {
+				foundBeaconHistory.setFoundBeaconIds(friends);
+				return false;
+			}
+		}
+
+		return true;
+	}
+
 	@Override
 	public void onBeaconsFoundInRegion(final Collection<Beacon> foundBeacons,
 			final Region region) {
+		final Collection<FoundBeacon> friends = dbHelper
+				.filterFriends(foundBeacons);
+
+		if (!shouldShowOnUI(friends)) {
+			return;
+		}
+
+		final Set<String> characterIdsToBeRemoved = new HashSet<String>(
+				characters.keySet());
+
 		runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
-				Collection<FoundBeacon> friends = dbHelper
-						.filterFriends(foundBeacons);
-				Set<String> characterIdsToBeRemoved = new HashSet<String>(
-						characters.keySet());
 				Iterator<FoundBeacon> itr = friends.iterator();
 				while (itr.hasNext()) {
 					FoundBeacon friend = itr.next();
@@ -334,5 +362,20 @@ public class MainActivity extends Activity implements BLECallback {
 				showNoOneCharacter(friends.isEmpty());
 			}
 		});
+	}
+
+	class FoundBeaconHistory {
+		private List<String> previouslyFoundBeaconIds = new ArrayList<String>();
+
+		public List<String> getPreviouslyFoundBeaconIds() {
+			return previouslyFoundBeaconIds;
+		}
+
+		public void setFoundBeaconIds(Collection<FoundBeacon> friends) {
+			previouslyFoundBeaconIds.clear();
+			for (FoundBeacon beacon : friends) {
+				previouslyFoundBeaconIds.add(beacon.getFriendInfo().getUUID());
+			}
+		}
 	}
 }

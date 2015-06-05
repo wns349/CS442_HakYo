@@ -53,8 +53,8 @@ public class Character {
 
 				balloonLayoutParams.addRule(RelativeLayout.ABOVE,
 						characterView.getId());
-				// balloonLayoutParams.addRule(RelativeLayout.ALIGN_LEFT,
-				// characterView.getId());
+				balloonLayoutParams.addRule(RelativeLayout.LEFT_OF,
+						characterView.getId());
 				characterBalloonView.setLayoutParams(balloonLayoutParams);
 				showBalloon(true);
 

@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationSet;
@@ -87,16 +88,8 @@ public class CharacterView extends RelativeLayout {
 			}
 			final View destView = getDestinationView(newTargetIndexToGo);
 
-			float tx, ty, ttx, tty;
-			float sx, sy, ssx, ssy;
-			int fromLoc[] = new int[2];
-			self.getLocationOnScreen(fromLoc);
-			int toLoc[] = new int[2];
-			destView.getLocationOnScreen(toLoc);
-//			ttx = toLoc[0];
-//			tty = toLoc[1];
-//			tx = fromLoc[0];
-//			ty = fromLoc[1];
+			final float tx, ty, ttx, tty;
+			final float sx, sy, ssx, ssy;
 			tx = self.getX();
 			ty = self.getY();
 			ttx = destView.getX();
@@ -110,10 +103,9 @@ public class CharacterView extends RelativeLayout {
 			// Close existing animation
 			this.clearAnimation();
 
-		
-
-			TranslateAnimation animTranslate = new TranslateAnimation(0, ttx
-					- tx, 0, tty - ty);
+			TranslateAnimation animTranslate = new TranslateAnimation(
+					Animation.ABSOLUTE, 0, Animation.ABSOLUTE, ttx - tx,
+					Animation.ABSOLUTE, 0, Animation.ABSOLUTE, tty - ty);
 			Log.d(TAG, "Translate: " + tx + "," + ttx + "," + ty + "," + tty
 					+ " (ttx-tx) :" + (ttx - tx) + " (tty-ty):" + (tty - ty));
 			animTranslate.setFillEnabled(true);
@@ -131,10 +123,10 @@ public class CharacterView extends RelativeLayout {
 
 			final AnimationSet animSet = new AnimationSet(true);
 			animSet.setDuration(Const.ANIMATION_TIME);
-			animSet.setInterpolator(new LinearInterpolator());
+			animSet.setInterpolator(new AccelerateInterpolator());
 			animSet.setRepeatCount(0);
-			animSet.setFillAfter(true);
 			animSet.setFillEnabled(true);
+			animSet.setFillAfter(true);
 			animSet.addAnimation(animTranslate);
 			animSet.addAnimation(animScale);
 			animSet.addAnimation(animRotate);
@@ -152,6 +144,13 @@ public class CharacterView extends RelativeLayout {
 				@Override
 				public void onAnimationEnd(Animation animation) {
 					self.setLayoutParams(destView.getLayoutParams());
+//					RelativeLayout.LayoutParams layoutParams = (LayoutParams) self.getLayoutParams();
+//					layoutParams.width = (int) ssx;
+//					layoutParams.height = (int) ssy;
+//					layoutParams.leftMargin = (int) ttx;
+//					layoutParams.topMargin = (int) tty;
+//					self.setLayoutParams(layoutParams);
+//					
 					self.clearAnimation();
 					prevAnimation.setLastIndex(newTargetIndexToGo);
 					prevAnimation.setAnimation(null);
