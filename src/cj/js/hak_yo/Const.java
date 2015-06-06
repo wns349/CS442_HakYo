@@ -29,6 +29,8 @@ public final class Const {
 		public static final List<Long> DATA_FIELDS = Arrays
 				.asList(new Long[] { 0L });
 		public static final String UNIQUE_REGION_ID = "myRangingUniqueId";
+		
+		public static final double LOW_PASS_FILTER_ALPHA = 0.75;
 	}
 
 	public static class DatabaseConst {
