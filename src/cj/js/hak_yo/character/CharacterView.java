@@ -190,6 +190,9 @@ public class CharacterView extends RelativeLayout {
 					LinearLayout.LayoutParams newLayoutParams = new LinearLayout.LayoutParams(
 							LayoutParams.WRAP_CONTENT,
 							LayoutParams.WRAP_CONTENT);
+					newLayoutParams.gravity=CENTER_IN_PARENT;
+					newLayoutParams.weight = 1.0f;
+					
 					ViewGroup parentViewGroup = ((ViewGroup) self.getParent());
 					if (parentViewGroup != null) {
 						parentViewGroup.removeView(self);
