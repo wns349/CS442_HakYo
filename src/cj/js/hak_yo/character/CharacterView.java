@@ -90,10 +90,10 @@ public class CharacterView extends RelativeLayout {
 
 			final float tx, ty, ttx, tty;
 			final float sx, sy, ssx, ssy;
-			tx = self.getX();
-			ty = self.getY();
-			ttx = destView.getX();
-			tty = destView.getY();
+			tx = self.getX() + self.getLayoutParams().width / 2;
+			ty = self.getY() + self.getLayoutParams().height / 2;
+			ttx = destView.getX() + destView.getLayoutParams().width / 2;
+			tty = destView.getY() + destView.getLayoutParams().height / 2;
 
 			sx = self.getLayoutParams().width;
 			sy = self.getLayoutParams().height;
@@ -129,7 +129,7 @@ public class CharacterView extends RelativeLayout {
 			animSet.setFillAfter(true);
 			animSet.addAnimation(animTranslate);
 			animSet.addAnimation(animScale);
-			animSet.addAnimation(animRotate);
+			// animSet.addAnimation(animRotate);
 
 			animSet.setAnimationListener(new AnimationListener() {
 				@Override
@@ -143,14 +143,11 @@ public class CharacterView extends RelativeLayout {
 
 				@Override
 				public void onAnimationEnd(Animation animation) {
-					self.setLayoutParams(destView.getLayoutParams());
-//					RelativeLayout.LayoutParams layoutParams = (LayoutParams) self.getLayoutParams();
-//					layoutParams.width = (int) ssx;
-//					layoutParams.height = (int) ssy;
-//					layoutParams.leftMargin = (int) ttx;
-//					layoutParams.topMargin = (int) tty;
-//					self.setLayoutParams(layoutParams);
-//					
+					LayoutParams destLayoutParams = (RelativeLayout.LayoutParams) destView
+							.getLayoutParams();
+
+					self.setLayoutParams(destLayoutParams);
+
 					self.clearAnimation();
 					prevAnimation.setLastIndex(newTargetIndexToGo);
 					prevAnimation.setAnimation(null);
