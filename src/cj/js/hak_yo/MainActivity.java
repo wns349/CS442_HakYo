@@ -313,13 +313,13 @@ public class MainActivity extends Activity implements BLECallback {
 	private boolean shouldShowOnUI(final Collection<FoundBeacon> friends) {
 		List<FoundBeacon> previouslyFoundBeacons = foundBeaconHistory
 				.getPreviouslyFoundBeacons();
-		
+
 		if (friends.size() != previouslyFoundBeacons.size()) {
 			foundBeaconHistory.setFoundBeacons(friends);
 			return false;
 		}
 		for (FoundBeacon friend : friends) {
-			if (!previouslyFoundBeacons.contains(friend.getFriendInfo()
+			if (!foundBeaconHistory.containsFriendId(friend.getFriendInfo()
 					.getUUID())) {
 				foundBeaconHistory.setFoundBeacons(friends);
 				return false;
@@ -328,9 +328,10 @@ public class MainActivity extends Activity implements BLECallback {
 
 		return true;
 	}
-	
+
 	private int calculateFilteredRssi(int rssi, int prevRssi) {
-		return (int)(Const.BeaconConst.LOW_PASS_FILTER_ALPHA * rssi + (1 - Const.BeaconConst.LOW_PASS_FILTER_ALPHA * prevRssi));
+		return (int) (Const.BeaconConst.LOW_PASS_FILTER_ALPHA * rssi + (1 - Const.BeaconConst.LOW_PASS_FILTER_ALPHA
+				* prevRssi));
 	}
 
 	@Override
@@ -338,18 +339,21 @@ public class MainActivity extends Activity implements BLECallback {
 			final Region region) {
 		final Collection<FoundBeacon> friends = dbHelper
 				.filterFriends(foundBeacons);
-	
-		List<FoundBeacon> existingFriends = new ArrayList<FoundBeacon>(foundBeaconHistory.getPreviouslyFoundBeacons());
+
+		List<FoundBeacon> existingFriends = new ArrayList<FoundBeacon>(
+				foundBeaconHistory.getPreviouslyFoundBeacons());
 		existingFriends.retainAll(friends);
-		
-		for (FoundBeacon existingFriend: existingFriends) {
-			for (FoundBeacon friend: friends) {
+
+		for (FoundBeacon existingFriend : existingFriends) {
+			for (FoundBeacon friend : friends) {
 				if (existingFriend.equals(friend)) {
-					friend.getBeacon().setRssi(calculateFilteredRssi(friend.getBeacon().getRssi(), existingFriend.getBeacon().getRssi()));
+					friend.getBeacon().setRssi(
+							calculateFilteredRssi(friend.getBeacon().getRssi(),
+									existingFriend.getBeacon().getRssi()));
 				}
 			}
 		}
-		
+
 		if (!shouldShowOnUI(friends)) {
 			return;
 		}
@@ -385,6 +389,17 @@ public class MainActivity extends Activity implements BLECallback {
 
 		public List<FoundBeacon> getPreviouslyFoundBeacons() {
 			return previouslyFoundBeacons;
+		}
+
+		public boolean containsFriendId(String friendId) {
+			for (FoundBeacon foundBeacon : previouslyFoundBeacons) {
+				if (foundBeacon.getFriendInfo().getUUID()
+						.equalsIgnoreCase(friendId)) {
+					return true;
+				}
+			}
+
+			return false;
 		}
 
 		public void setFoundBeacons(Collection<FoundBeacon> friends) {

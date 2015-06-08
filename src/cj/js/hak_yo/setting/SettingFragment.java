@@ -54,7 +54,12 @@ public class SettingFragment extends PreferenceFragment implements
 
 		// Advertise
 		CheckBoxPreference prefAdvertise = (CheckBoxPreference) findPreference(getString(R.string.pref_advertise));
-		prefAdvertise.setChecked(settingHelper.isAdvertiseEnabled());
+		if (BLEUtil.isAdvertisingSupportedDevice(getActivity())) {
+			prefAdvertise.setChecked(settingHelper.isAdvertiseEnabled());
+		} else {
+			prefAdvertise.setChecked(false);
+			prefAdvertise.setEnabled(false);
+		}
 
 		// Do not disturb
 		DoNotDisturbPreference prefDoNotDisturb = (DoNotDisturbPreference) findPreference(getString(R.string.pref_do_not_disturb));

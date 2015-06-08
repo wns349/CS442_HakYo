@@ -22,7 +22,8 @@ public final class Const {
 	public static class BeaconConst {
 		public static final String UUID_2 = "1";
 		public static final String UUID_3 = "2";
-		public static final String LAYOUT_STRING = "m:2-3=beac,i:4-19,i:20-21,i:22-23,p:24-24,d:25-25";
+		//public static final String LAYOUT_STRING = "m:2-3=beac,i:4-19,i:20-21,i:22-23,p:24-24,d:25-25";
+		public static final String LAYOUT_STRING = "m:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24";
 
 		public static final int MANUFACTURER = 0x0118;
 		public static final int TX_POWER = -59;

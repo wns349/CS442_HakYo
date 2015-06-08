@@ -29,6 +29,7 @@ public class BLEService extends Service implements BeaconConsumer, Runnable {
 	private static final String TAG = "CJS";
 
 	private static BLEService instance = null;
+	private static boolean isInitialized = false;
 
 	private BluetoothAdapter btAdapter = null;
 	private BeaconManager beaconManager = null;
@@ -44,6 +45,7 @@ public class BLEService extends Service implements BeaconConsumer, Runnable {
 	private SettingHelper settingHelper = null;
 
 	private Thread selfThread = null;
+	
 
 	@Override
 	public void onCreate() {
@@ -73,7 +75,7 @@ public class BLEService extends Service implements BeaconConsumer, Runnable {
 	@Override
 	public void onDestroy() {
 
-		if (BLEUtil.isAdvertisingSupportedDevice()) {
+		if (BLEUtil.isAdvertisingSupportedDevice(this)) {
 			advertiseBluetoothDevice(false);
 		}
 		scanBluetoothDevices(false);
@@ -104,11 +106,16 @@ public class BLEService extends Service implements BeaconConsumer, Runnable {
 	}
 
 	public void startBLE() {
-		if (initializeBluetooth()) {
+		if (initializeBluetooth() && !isInitialized()) {
+			isInitialized = true;
 			initializeBeacon();
 			startBeacon();
 			registerBroadcastReceiver(true);
 		}
+	}
+
+	private boolean isInitialized() {
+		return isInitialized;
 	}
 
 	private void registerBroadcastReceiver(boolean register) {
@@ -125,7 +132,7 @@ public class BLEService extends Service implements BeaconConsumer, Runnable {
 	}
 
 	private void startBeacon() {
-		if (BLEUtil.isAdvertisingSupportedDevice()) {
+		if (BLEUtil.isAdvertisingSupportedDevice(this)) {
 			advertiseBluetoothDevice(true);
 		}
 
@@ -134,15 +141,17 @@ public class BLEService extends Service implements BeaconConsumer, Runnable {
 
 	private void initializeBeacon() {
 		Log.d(TAG, "Initializing BeaconManager");
+		BeaconParser beaconParser = new BeaconParser()
+				.setBeaconLayout(Const.BeaconConst.LAYOUT_STRING);
+
 		beaconManager = BeaconManager.getInstanceForApplication(this);
+		beaconManager.getBeaconParsers().add(beaconParser);
 		// beaconManager.setForegroundScanPeriod(500L);
 		// beaconManager.setBackgroundScanPeriod(500L);
 
-		if (BLEUtil.isAdvertisingSupportedDevice()) {
+		if (BLEUtil.isAdvertisingSupportedDevice(this)) {
 			Log.d(TAG, "Initializing BeaconParser - Android Lollipop detected!");
 
-			BeaconParser beaconParser = new BeaconParser()
-					.setBeaconLayout(Const.BeaconConst.LAYOUT_STRING);
 			beaconTransmitter = new BeaconTransmitter(getApplicationContext(),
 					beaconParser);
 			// beaconTransmitter.setAdvertiseMode(AdvertiseSettings.ADVERTISE_MODE_LOW_LATENCY);

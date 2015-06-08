@@ -116,7 +116,7 @@ public class AddFriendActivity extends Activity implements BLECallback {
 			BLEService.LocalBinder binder = (BLEService.LocalBinder) service;
 			bleService = binder.getService();
 			bleService.setBLECallback(AddFriendActivity.this);
-			bleService.startBLE();
+			//bleService.startBLE();
 		}
 	};
 
