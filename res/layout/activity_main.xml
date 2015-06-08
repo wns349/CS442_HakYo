@@ -7,6 +7,23 @@
     android:paddingTop="?android:attr/actionBarSize"
     tools:context="${relativePackage}.${activityClass}" >
 
+    <TextView
+        android:id="@+id/txt_character_name"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/hello_world"
+        android:textSize="16sp"
+        android:textAlignment="center"
+        android:gravity="center"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentTop="true"
+        android:background="@drawable/addfriend_layout_background"
+        android:padding="10dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:layout_marginTop="10dp"
+        android:textStyle="bold" />
+
     <Space
         android:id="@+id/space_center"
         android:layout_width="25dp"
@@ -35,55 +52,43 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true" />
 
-    <RelativeLayout
+    <LinearLayout
         android:id="@+id/space_character_loc_01"
-        android:layout_width="30dp"
+        android:layout_width="wrap_content"
         android:layout_height="43dp"
         android:layout_alignTop="@id/space_center_sun"
-        android:layout_toEndOf="@id/space_center_sun" />
+        android:gravity="center_horizontal"
+        android:orientation="horizontal" />
 
-    <RelativeLayout
+    <LinearLayout
         android:id="@+id/space_character_loc_02"
-        android:layout_width="50dp"
+        android:layout_width="wrap_content"
         android:layout_height="71dp"
         android:layout_alignTop="@id/space_center"
-        android:layout_toStartOf="@id/space_center"
         android:contentDescription="@string/hello_world"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal"
         android:src="@drawable/c1" />
 
-    <RelativeLayout
+    <LinearLayout
         android:id="@+id/space_character_loc_03"
-        android:layout_width="75dp"
+        android:layout_width="wrap_content"
         android:layout_height="107dp"
         android:layout_alignTop="@id/space_center_below"
-        android:layout_toEndOf="@id/space_center"
         android:contentDescription="@string/hello_world"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal"
         android:src="@drawable/c2" />
 
-    <RelativeLayout
+    <LinearLayout
         android:id="@+id/space_character_loc_04"
-        android:layout_width="120dp"
+        android:layout_width="wrap_content"
         android:layout_height="171dp"
         android:layout_below="@id/space_center_below"
-        android:layout_centerHorizontal="true"
         android:contentDescription="@string/hello_world"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal"
         android:src="@drawable/c3" />
-
-    <RelativeLayout
-        android:id="@+id/layout_RB_corner"
-        android:layout_width="140dp"
-        android:layout_height="220dp"
-        android:layout_alignBottom="@id/space_RB_corner"
-        android:layout_alignEnd="@id/space_RB_corner" >
-
-        <RelativeLayout
-            android:id="@+id/space_character_loc_05"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:contentDescription="@string/hello_world"
-            android:scaleType="matrix"
-            android:src="@drawable/c4" />
-    </RelativeLayout>
 
     <ImageView
         android:id="@+id/img_character_noone"

@@ -1,6 +1,7 @@
 package cj.js.hak_yo.character;
 
 import android.content.Context;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,7 +15,9 @@ import android.view.animation.RotateAnimation;
 import android.view.animation.ScaleAnimation;
 import android.view.animation.TranslateAnimation;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import cj.js.hak_yo.Const;
 import cj.js.hak_yo.Const.Character;
 import cj.js.hak_yo.R;
@@ -32,12 +35,43 @@ public class CharacterView extends RelativeLayout {
 
 	private final PrevAnimation prevAnimation = new PrevAnimation();
 
-	public CharacterView(Context context, FriendInfo friendInfo,
-			ViewGroup mainLayout) {
+	private int myIndex = -1;
+
+	private static boolean isNameShown = false;
+
+	public CharacterView(Context context, final FriendInfo friendInfo,
+			final ViewGroup mainLayout) {
 		super(context);
 		this.friendInfo = friendInfo;
 		this.mainLayout = mainLayout;
 		initializeView(context);
+
+		moveTo(2, false);
+
+		// Set click listener
+		this.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				if (isNameShown) {
+					return;
+				}
+
+				isNameShown = true;
+				final TextView txtCharacterName = (TextView) mainLayout
+						.findViewById(R.id.txt_character_name);
+				txtCharacterName.setText(friendInfo.getAlias());
+				txtCharacterName.setVisibility(View.VISIBLE);
+
+				Handler h = new Handler();
+				h.postDelayed(new Runnable() {
+					@Override
+					public void run() {
+						txtCharacterName.setVisibility(View.GONE);
+						isNameShown = false;
+					}
+				}, 1500L);
+			}
+		});
 	}
 
 	private void initializeView(Context context) {
@@ -69,6 +103,12 @@ public class CharacterView extends RelativeLayout {
 	}
 
 	public void moveTo(int targetIndexToGo, boolean doAnimation) {
+		if (targetIndexToGo == myIndex) {
+			return;
+		}
+		myIndex = targetIndexToGo;
+
+		doAnimation = false;
 		final View self = this;
 		if (doAnimation) {
 			if (prevAnimation.isFirstRun()) {
@@ -86,7 +126,7 @@ public class CharacterView extends RelativeLayout {
 			} else {
 				newTargetIndexToGo = targetIndexToGo;
 			}
-			final View destView = getDestinationView(newTargetIndexToGo);
+			final LinearLayout destView = (LinearLayout) getDestinationView(newTargetIndexToGo);
 
 			final float tx, ty, ttx, tty;
 			final float sx, sy, ssx, ssy;
@@ -143,30 +183,50 @@ public class CharacterView extends RelativeLayout {
 
 				@Override
 				public void onAnimationEnd(Animation animation) {
-					LayoutParams destLayoutParams = (RelativeLayout.LayoutParams) destView
-							.getLayoutParams();
-
-					self.setLayoutParams(destLayoutParams);
-
 					self.clearAnimation();
+
+					LayoutParams selfLayoutParams = (RelativeLayout.LayoutParams) self
+							.getLayoutParams();
+					LinearLayout.LayoutParams newLayoutParams = new LinearLayout.LayoutParams(
+							LayoutParams.WRAP_CONTENT,
+							LayoutParams.WRAP_CONTENT);
+					ViewGroup parentViewGroup = ((ViewGroup) self.getParent());
+					if (parentViewGroup != null) {
+						parentViewGroup.removeView(self);
+					}
+					self.setLayoutParams(newLayoutParams);
+					destView.addView(self);
+					// self.setLayoutParams(selfLayoutParams);
+
 					prevAnimation.setLastIndex(newTargetIndexToGo);
 					prevAnimation.setAnimation(null);
 
 					startStationaryAnimation();
+
+					Log.d(TAG, "onAnimationEnd called done");
 				}
 			});
 			this.startAnimation(animSet);
 		} else {
-			final View destView = getDestinationView(targetIndexToGo);
-			this.setLayoutParams(destView.getLayoutParams());
-			prevAnimation.setLastIndex(targetIndexToGo);
+			self.clearAnimation();
+
+			final LinearLayout destView = (LinearLayout) getDestinationView(targetIndexToGo);
+			LinearLayout.LayoutParams newLayoutParams = new LinearLayout.LayoutParams(
+					LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+			ViewGroup parentViewGroup = ((ViewGroup) self.getParent());
+			if (parentViewGroup != null) {
+				parentViewGroup.removeView(self);
+			}
+			self.setLayoutParams(newLayoutParams);
+			destView.addView(self);
 			startStationaryAnimation();
 		}
 	}
 
 	protected void startStationaryAnimation() {
 		RotateAnimation animRotate = new RotateAnimation(-5, 5,
-				getLayoutParams().width / 2.0f, getLayoutParams().height / 2.0f);
+				Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF,
+				0.5f);
 		animRotate.setRepeatCount(Animation.INFINITE);
 		animRotate.setRepeatMode(AnimationSet.REVERSE);
 		final AnimationSet animSet = new AnimationSet(true);
@@ -182,8 +242,6 @@ public class CharacterView extends RelativeLayout {
 
 	private View getDestinationView(int targetIndexToGo) {
 		switch (targetIndexToGo) {
-		case 4:
-			return mainLayout.findViewById(R.id.space_character_loc_05);
 		case 3:
 			return mainLayout.findViewById(R.id.space_character_loc_04);
 		case 2:

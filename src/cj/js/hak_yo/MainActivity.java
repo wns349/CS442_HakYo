@@ -39,7 +39,7 @@ import android.widget.Toast;
 import cj.js.hak_yo.ble.BLECallback;
 import cj.js.hak_yo.ble.BLEService;
 import cj.js.hak_yo.ble.FoundBeacon;
-import cj.js.hak_yo.character.Character;
+import cj.js.hak_yo.character.CharacterView;
 import cj.js.hak_yo.db.DBHelper;
 import cj.js.hak_yo.friend.AddFriendActivity;
 import cj.js.hak_yo.setting.SettingActivity;
@@ -54,7 +54,7 @@ public class MainActivity extends Activity implements BLECallback {
 
 	private SettingHelper settingHelper = null;
 
-	private Map<String, Character> characters = new HashMap<String, Character>();
+	private Map<String, CharacterView> characters = new HashMap<String, CharacterView>();
 
 	private FoundBeaconHistory foundBeaconHistory = new FoundBeaconHistory();
 
@@ -188,27 +188,25 @@ public class MainActivity extends Activity implements BLECallback {
 	}
 
 	private void initializeViews() {
-
+		// Hide text
+		findViewById(R.id.txt_character_name).setVisibility(View.GONE);
 	}
 
 	private void showFriend(FoundBeacon friend) {
 		String friendId = friend.getFriendInfo().getUUID();
-		Character character = characters.get(friendId);
+		CharacterView character = characters.get(friendId);
 		if (character == null) {
 			Log.d(TAG, "Generating new character view: " + friendId);
 			// Make new character view
-			character = new Character(this, friend.getFriendInfo(),
+			character = new CharacterView(this, friend.getFriendInfo(),
 					(ViewGroup) findViewById(R.id.layout_main));
-			ViewGroup mainLayout = (ViewGroup) findViewById(R.id.layout_main);
-			mainLayout.addView(character.getCharacterView());
-			mainLayout.addView(character.getCharacterBalloonView());
-			character.initialize();
 			characters.put(friendId, character);
 		}
 
 		int targetIndexToGo = getCharacterIndex(friend);
-		Log.d(TAG, "ShowFriend: " + targetIndexToGo + " , " + friendId);
-		character.moveCharacterTo(targetIndexToGo, true);
+		Log.d(TAG, "ShowFriend: " + targetIndexToGo + " , " + friendId + " char: "+friend.getFriendInfo().getCharacter());
+
+		character.moveTo(targetIndexToGo, true);
 	}
 
 	private void removeFriend(String characterToRemoveId) {
@@ -216,14 +214,14 @@ public class MainActivity extends Activity implements BLECallback {
 			return;
 		}
 
-		Character characterToRemove = characters.remove(characterToRemoveId);
+		CharacterView characterToRemove = characters.remove(characterToRemoveId);
 		if (characterToRemove == null) {
 			return;
 		}
 
-		ViewGroup mainLayout = (ViewGroup) findViewById(R.id.layout_main);
-		mainLayout.removeView(characterToRemove.getCharacterView());
-		mainLayout.removeView(characterToRemove.getCharacterBalloonView());
+//		ViewGroup mainLayout = (ViewGroup) findViewById(R.id.layout_main);
+//		mainLayout.removeView(characterToRemove.getCharacterView());
+//		mainLayout.removeView(characterToRemove.getCharacterBalloonView());
 
 		// Garbage collected characterToRemove
 		characterToRemove = null;
