@@ -3,6 +3,7 @@ package cj.js.hak_yo.friend;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 
 import org.altbeacon.beacon.Beacon;
 import org.altbeacon.beacon.Region;
@@ -116,7 +117,7 @@ public class AddFriendActivity extends Activity implements BLECallback {
 			BLEService.LocalBinder binder = (BLEService.LocalBinder) service;
 			bleService = binder.getService();
 			bleService.setBLECallback(AddFriendActivity.this);
-			//bleService.startBLE();
+			// bleService.startBLE();
 		}
 	};
 
@@ -181,15 +182,16 @@ public class AddFriendActivity extends Activity implements BLECallback {
 		return false;
 	}
 
-	private void addFriend(String friendName, String macAddress, int rssi) {
+	private void addFriend(String friendName, String friendId, int rssi) {
 		if (dbHelper == null) {
 			dbHelper = new DBHelper(this);
 		}
 
-		int randomCharacter = (int) (System.currentTimeMillis() % Const.Character
-				.values().length);
-		FriendInfo friendInfo = new FriendInfo(friendName, macAddress, rssi,
-				Const.Character.values()[randomCharacter].name());
+		int characterId = Math
+				.abs((int) (UUID.fromString(friendId).hashCode() % Const.Character
+						.values().length));
+		FriendInfo friendInfo = new FriendInfo(friendName, friendId, rssi,
+				Const.Character.values()[characterId].name());
 		dbHelper.insertFriendInfo(friendInfo);
 	}
 
